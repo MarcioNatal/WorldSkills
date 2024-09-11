@@ -47,6 +47,6 @@ public final class Constants
     public static final double wheelPulseRatio      = pulsePerRevolution * gearRatio;
 
     // Distance per tick
-    public static final double wheelDistPerTick  = (Math.PI * 2 * wheelRadius) / wheelPulseRatio;
+    public static final double wheelDistPerTick  = (Math.PI * 2 * wheelRadius) / pulsePerRevolution; //mm wheelPulseRatio;
 
 }

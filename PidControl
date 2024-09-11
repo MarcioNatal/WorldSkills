@@ -1,0 +1,41 @@
+public class ControladorPID {
+    private double Kp, Ki, Kd;
+    private double erroAnterior = 0;
+    private double integral = 0;
+    private double maxIntegral;
+    private double dt;
+
+    private Robo robo;
+
+    public ControladorPID(Robo robo, double Kp, double Ki, double Kd, double maxIntegral, double dt) {
+        this.robo = robo;
+        this.Kp = Kp;
+        this.Ki = Ki;
+        this.Kd = Kd;
+        this.maxIntegral = maxIntegral;
+        this.dt = dt;
+    }
+
+    public void controlar(double anguloDesejado) {
+        double anguloAtual = robo.getAnguloAtual();
+        double erro = anguloDesejado - anguloAtual;
+
+        // Termo proporcional
+        double termoP = Kp * erro;
+
+        // Termo integral
+        integral += Ki * erro * dt;
+        integral = Math.min(integral, maxIntegral);
+        integral = Math.max(integral, -maxIntegral);
+
+        // Termo derivativo
+        double termoD = Kd * (erro - erroAnterior) / dt;
+        erroAnterior = erro;
+
+        // Saída do controlador
+        double saida = termoP + integral + termoD;
+
+        // Aplicar a saída ao robô (ajuste nas velocidades das rodas)
+        robo.setVelocidadesRodas(saida);
+    }
+}

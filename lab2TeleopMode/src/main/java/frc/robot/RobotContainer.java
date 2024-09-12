@@ -1,0 +1,130 @@
+/*----------------------------------------------------------------------------*/
+/* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
+/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* must be accompanied by the FIRST BSD license file in the root directory of */
+/* the project.                                                               */
+/*----------------------------------------------------------------------------*/
+
+package frc.robot;
+
+//java imports
+import java.util.HashMap;
+import java.util.Map;
+
+//WPI imports
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
+//Command imports
+import frc.robot.commands.SimpleDrive;
+import frc.robot.commands.AutoCommand;
+import frc.robot.commands.DriveMotor;
+
+//Subsystem imports
+import frc.robot.subsystems.DriveTrain;
+
+/**
+ * This class is where the bulk of the robot should be declared.  Since Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
+ * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
+ * (including subsystems, commands, and button mappings) should be declared here.
+ */
+public class RobotContainer 
+{
+  // The robot's subsystems and commands are defined here...
+  public  static DriveTrain drive;
+
+  public static SimpleDrive simpleDrive; 
+
+  public static XboxController driverJoystick; 
+  
+
+
+  //Define the auto selector
+  public static SendableChooser<String> autoChooser;
+  public static Map<String, AutoCommand> autoMode = new HashMap<>();
+
+  
+  /**
+   * Constructor
+   * The container for the robot.  Contains subsystems, OI devices, and commands.
+   */
+  
+  public RobotContainer() 
+  {
+
+    /**
+     * Create an instance of the subsystems
+     */
+    drive = new DriveTrain();
+
+
+     /**
+     * Create an instance of the commands
+     */
+    simpleDrive = new SimpleDrive ();
+
+    //instantiate Xbox Controller
+    driverJoystick = new XboxController(Constants.kDriverControllerPort);
+
+
+    //set default command to drive with joystick
+/*
+    swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(
+                swerveSubsystem,vision,
+                () -> -driverJoystick.getRawAxis(OIConstants.kDriverYAxis),
+                () -> driverJoystick.getRawAxis(OIConstants.kDriverXAxis),
+                () -> driverJoystick.getRawAxis(OIConstants.kDriverRotAxis),
+                () -> !driverJoystick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)));*/
+
+    drive.setDefaultCommand (new RunCommand(
+      () -> drive.holonomicDrive (
+                                  driverJoystick.getRawAxis(Constants.kDriverXAxis),
+                                  driverJoystick.getRawAxis(Constants.kDriverYAxis),
+                                  driverJoystick.getRawAxis(Constants.kDriverRotAxis)
+          ),
+                                  drive
+                                  )
+        );
+                                          
+
+    
+    // Configure the button bindings
+    configureButtonBindings();
+  }
+
+  /**
+   * Use this method to define your button->command mappings.  Buttons can be created by
+   * instantiating a {@link GenericHID} or one of its subclasses ({@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
+   * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   */
+  private void configureButtonBindings() 
+  {
+      
+    JoystickButton motor1Forward = new JoystickButton (driverJoystick,XboxController.Button.kBumperLeft.value);
+    motor1Forward.whenPressed(new SimpleDrive());
+
+
+
+  }
+
+
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
+    public Command getAutonomousCommand() 
+    {
+      //the call to return the autonomous routine that we want the scheduler to run.
+      String mode = RobotContainer.autoChooser.getSelected();
+      SmartDashboard.putString("Chosen Auto Mode", mode);
+      return autoMode.getOrDefault(mode, new DriveMotor());
+    }
+}

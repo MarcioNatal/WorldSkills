@@ -1,0 +1,67 @@
+/*----------------------------------------------------------------------------*/
+/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
+/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* must be accompanied by the FIRST BSD license file in the root directory of */
+/* the project.                                                               */
+/*----------------------------------------------------------------------------*/
+
+package frc.robot.commands;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
+import frc.robot.subsystems.OmniDrive;
+
+public class DriveToDistance extends CommandBase 
+{
+  //Grab the subsystem instance from RobotContainer
+  private static final OmniDrive omniDrive = RobotContainer.omniDrive;
+
+  private double distance = 0;
+  //private boolean finish = false;
+
+  /**
+   * Creates a new DriveToDistance.
+   */
+  public DriveToDistance(double metros ) 
+  {
+    // Use addRequirements() here to declare subsystem dependencies.
+    
+    addRequirements(omniDrive); // Adds the subsystem to the command
+    distance = metros;
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() 
+  {
+    omniDrive.resetEncoders();
+    omniDrive.resetYaw();
+  }
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() 
+  {
+    //
+    omniDrive.holonomicDrive(0.0, -0.5, 0.0);
+     
+    SmartDashboard.putNumber("Distancia Percorrida", ((omniDrive.getEncoderMotor1Distance()+ (-omniDrive.getEncoderMotor3Distance()))/2) );
+    
+
+  }
+
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) 
+    {
+      omniDrive.holonomicDrive(0, 0, 0);
+    }
+
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() 
+    {
+      return (omniDrive.getEncoderMotor1Distance()+ (-omniDrive.getEncoderMotor3Distance()))/2 >= distance;
+    }
+}

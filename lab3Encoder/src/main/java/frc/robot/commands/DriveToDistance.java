@@ -17,8 +17,8 @@ public class DriveToDistance extends CommandBase
   //Grab the subsystem instance from RobotContainer
   private static final OmniDrive drive = RobotContainer.drive;
 
-  private double distance = 0;
-  private boolean finish = false;
+  private double distance = 500;
+
   /**
    * Creates a new DriveToDistance.
    */
@@ -41,19 +41,7 @@ public class DriveToDistance extends CommandBase
   @Override
   public void execute() 
   {
-    distance = (drive.getEncoderMotor1Distance()+ (-drive.getEncoderMotor3Distance()))/2;
-
-    if (distance <= 500 )
-    {
-      drive.setMotor1Speed(0.5); // Set motor speed to 50%
-      drive.setMotor3Speed(-0.5); // Set motor speed to 50%
-    }
-    else
-    {
-      finish = true;
-    }
-
-    SmartDashboard.putNumber("Distancia", distance);
+    drive.holonomicDrive(0, -.5, 0);
 
   }
 
@@ -61,14 +49,13 @@ public class DriveToDistance extends CommandBase
   @Override
   public void end(boolean interrupted) 
   {
-    drive.setMotor1Speed(0.0);
-    drive.setMotor3Speed(0.0);
+    drive.holonomicDrive(0, 0, 0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() 
   {
-    return finish;
+    return (drive.getAverageForwardEncoderDistance() >= distance);
   }
 }

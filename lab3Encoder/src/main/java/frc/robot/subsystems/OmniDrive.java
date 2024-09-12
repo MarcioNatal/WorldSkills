@@ -240,11 +240,11 @@ public class OmniDrive extends SubsystemBase {
         SmartDashboard.putNumber("Eixo y", y);
         SmartDashboard.putNumber("Eixo z", z);
 
-        /*
-        SmartDashboard.putNumber("Motor 1 speed", encoderMotor1.getRate());
-        SmartDashboard.putNumber("Motor 2 speed", encoderMotor2.getRate());
-        SmartDashboard.putNumber("Motor 3 speed", encoderMotor3.getRate());
-        */
+        
+        SmartDashboard.putNumber("Motor 2 linear speed", getSpeedMotor1());
+        SmartDashboard.putNumber("Motor 2 angular speed", getAngularSpeedMotor1());
+        
+        
 
 
 
@@ -280,6 +280,29 @@ public class OmniDrive extends SubsystemBase {
     {
         return encoderMotor2.getDistance();
     }
+
+    /**
+     * Gets the encoder linear speed for the right drive motor
+     * <p>
+     * @return speed in m/s
+     */
+
+     public double getSpeedMotor1()
+     {
+         return encoderMotor1.getRate()/1000 ;
+     }
+
+      /**
+     * Gets the encoder angular speed for the right drive motor
+     * <p>
+     * @return speed in rad/s
+     */
+
+     public double getAngularSpeedMotor1()
+     {
+         return getSpeedMotor1()/Constants.wheelRadiusMeters;
+     }
+
 
     /**
      * Gets the average forward or reverse encoder distance

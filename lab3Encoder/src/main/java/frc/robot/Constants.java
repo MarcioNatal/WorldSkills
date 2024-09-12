@@ -47,7 +47,8 @@ public final class Constants
      */
     
     // Omni wheel radius
-    public static final double wheelRadius          = 52; //mm  Diametro 105 mm
+    public static final double wheelRadius          = 52; //mm  
+    public static final double wheelRadiusMeters    = wheelRadius/1000; 
 
     // Encoder pulse per revolution
     public static final double pulsePerRevolution   = 1440.00;

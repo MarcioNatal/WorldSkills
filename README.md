@@ -2,7 +2,12 @@ Laboratorio 1 - Programa base para robotica móvel da World Skills usando um mot
 
 Laboratorio 2 - Programa para operaçao do robo em modo Teleoperado, criação de joystick.
 
-Laboratorio 3 - Programa para implementação da leitura de encoder e criação de métodos para medir velocidades.
+                Sugestao de exercicio
+
+                1. Criar um botão para parar o Comando SimpleDrive
+                
+
+Laboratorio 3 - Programa para implementação da leitura de encoder e criação de métodos para medir velocidades e mostrar valores na Shuffleboard
 
 Laboratório 4 - Programa para implementação de autonomo, Sendable chooser para seleção de autonomo na Shuffleboard, Sequential Commandgroup
                 

@@ -22,6 +22,6 @@ public class DriveMotor extends AutoCommand
          * Calls the SimpleDrive command and adds a 5 second timeout
          * When the timeout is complete it will call the end() method in the SimpleDrive command
          */
-        super(new SimpleDrive().withTimeout(5));
+        addCommands(new SimpleDrive().withTimeout(5));
     }
 }

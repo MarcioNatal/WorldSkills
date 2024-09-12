@@ -12,9 +12,10 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 //RobotContainer import
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.OmniDrive;
 
 ////Subsystem imports
-import frc.robot.subsystems.DriveTrain;
+
 
 
 /**
@@ -26,7 +27,7 @@ import frc.robot.subsystems.DriveTrain;
 public class SimpleDrive extends CommandBase 
 {
   //Grab the subsystem instance from RobotContainer
-  private static final DriveTrain drive = RobotContainer.drive;
+  private static final OmniDrive drive = RobotContainer.drive;
 
 
   /**

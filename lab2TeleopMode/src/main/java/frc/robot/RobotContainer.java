@@ -7,26 +7,21 @@
 
 package frc.robot;
 
-//java imports
-import java.util.HashMap;
-import java.util.Map;
-
 //WPI imports
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.DriveMotor;
+import frc.robot.commands.SimpleDrive;
 
 //Command imports
-import frc.robot.commands.SimpleDrive;
-import frc.robot.commands.AutoCommand;
-import frc.robot.commands.DriveMotor;
+
+
 
 //Subsystem imports
-import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.OmniDrive;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -37,17 +32,16 @@ import frc.robot.subsystems.DriveTrain;
 public class RobotContainer 
 {
   // The robot's subsystems and commands are defined here...
-  public  static DriveTrain drive;
+  public  static OmniDrive drive;
 
-  public static SimpleDrive simpleDrive; 
+   
 
   public static XboxController driverJoystick; 
   
 
 
   //Define the auto selector
-  public static SendableChooser<String> autoChooser;
-  public static Map<String, AutoCommand> autoMode = new HashMap<>();
+  
 
   
   /**
@@ -61,28 +55,20 @@ public class RobotContainer
     /**
      * Create an instance of the subsystems
      */
-    drive = new DriveTrain();
-
+    drive = new OmniDrive();
 
      /**
      * Create an instance of the commands
      */
-    simpleDrive = new SimpleDrive ();
+    
 
     //instantiate Xbox Controller
     driverJoystick = new XboxController(Constants.kDriverControllerPort);
 
 
     //set default command to drive with joystick
-/*
-    swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(
-                swerveSubsystem,vision,
-                () -> -driverJoystick.getRawAxis(OIConstants.kDriverYAxis),
-                () -> driverJoystick.getRawAxis(OIConstants.kDriverXAxis),
-                () -> driverJoystick.getRawAxis(OIConstants.kDriverRotAxis),
-                () -> !driverJoystick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)));*/
 
-    drive.setDefaultCommand (new RunCommand(
+      drive.setDefaultCommand (new RunCommand(
       () -> drive.holonomicDrive (
                                   driverJoystick.getRawAxis(Constants.kDriverXAxis),
                                   driverJoystick.getRawAxis(Constants.kDriverYAxis),
@@ -106,9 +92,17 @@ public class RobotContainer
    */
   private void configureButtonBindings() 
   {
-      
+    //Liga o motor1 enquanto estiver pressionado o botao 
     JoystickButton motor1Forward = new JoystickButton (driverJoystick,XboxController.Button.kBumperLeft.value);
     motor1Forward.whenPressed(new SimpleDrive());
+
+    //Liga o motor durante o tempo de acordo com o comando
+    JoystickButton motor1Timed = new JoystickButton (driverJoystick,XboxController.Button.kBumperRight.value);
+    motor1Timed.whenPressed(new DriveMotor());
+
+    /**Exercicio
+     * Crie um novo comando para movimentar o motor para frente por 5 segundos e em seguida 5 segundos lateralmente ao pressionar o botao A do Xbox
+     */
 
 
 
@@ -123,8 +117,6 @@ public class RobotContainer
     public Command getAutonomousCommand() 
     {
       //the call to return the autonomous routine that we want the scheduler to run.
-      String mode = RobotContainer.autoChooser.getSelected();
-      SmartDashboard.putString("Chosen Auto Mode", mode);
-      return autoMode.getOrDefault(mode, new DriveMotor());
+      return null;
     }
 }

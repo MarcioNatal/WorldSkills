@@ -9,13 +9,11 @@ package frc.robot;
 
 //WPI imports
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 //Command imports
-import frc.robot.commands.DriveMotor;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -64,15 +62,7 @@ public class Robot extends TimedRobot
   @Override
   public void disabledInit() 
   {
-    //Check to see if autoChooser has been created
-    if(null == RobotContainer.autoChooser)
-    {
-    RobotContainer.autoChooser = new SendableChooser<>();
-    }
-    //Add the default auto to the auto chooser
-    RobotContainer.autoChooser.setDefaultOption("Drive Motor", "Drive Motor");
-    RobotContainer.autoMode.put("Drive Motor", new DriveMotor());
-    SmartDashboard.putData(RobotContainer.autoChooser);
+    
 
   }
 

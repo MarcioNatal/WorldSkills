@@ -30,15 +30,7 @@ public class AutoCommand extends SequentialCommandGroup
   {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    super( );
+    addCommands(new DriveMotor(), new SimpleDrive());
   }
-  /**
-   * Overloaded Constructor to create inline commands
-   * <p>
-   * @param cmd The cmd to be executed
-   */
-  public AutoCommand(Command ... cmd)
-  {
-      super(cmd);
-  }
+  
 }

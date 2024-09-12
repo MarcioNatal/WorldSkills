@@ -9,15 +9,11 @@ package frc.robot.subsystems;
 
 //WPI imports
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 //Vendor imports
 import com.studica.frc.TitanQuad;
-import com.studica.frc.TitanQuadEncoder;
 import com.kauailabs.navx.frc.AHRS;
 
 import frc.robot.Constants;
@@ -28,7 +24,7 @@ import frc.robot.Constants;
  * This class creates the instance of the Titan and enables and sets the speed of the defined motor.
  */
 
-public class DriveTrain extends SubsystemBase 
+public class OmniDrive extends SubsystemBase 
 {
   /**
      * Declare Motors
@@ -42,9 +38,7 @@ public class DriveTrain extends SubsystemBase
      * Declare Encoders
      */
     
-    private TitanQuadEncoder encoderMotor1;
-    private TitanQuadEncoder encoderMotor2;
-    private TitanQuadEncoder encoderMotor3;
+    
 
     /**
      * Sensors
@@ -61,7 +55,7 @@ public class DriveTrain extends SubsystemBase
   /**
    * Creates a new DriveTrain.
    */
-  public DriveTrain() 
+  public OmniDrive() 
   {
     /**
      * Instantiate Objects
@@ -74,18 +68,12 @@ public class DriveTrain extends SubsystemBase
 
 
 
-   
-
-    
-
     /**
        * Encoders
        *@param 
        * motor , motor id, distance per tick
        */
-    encoderMotor1 = new TitanQuadEncoder(motor1, Constants.M1, Constants.wheelDistPerTick);
-    encoderMotor2 = new TitanQuadEncoder(motor2, Constants.M2, Constants.wheelDistPerTick);
-    encoderMotor3 = new TitanQuadEncoder(motor3, Constants.M3, Constants.wheelDistPerTick);
+    
 
     /**
      * Sensors
@@ -236,45 +224,7 @@ public class DriveTrain extends SubsystemBase
     }
     
     
-    /**
-     * Gets the encoder distance for the left drive motor
-     * <p>
-     * @return distance traveled in mm
-     */
-    public double getEncoderMotor3Distance()
-    {
-        return encoderMotor3.getEncoderDistance();
-    }
-
-    /**
-     * Gets the encoder distance for the right drive motor
-     * <p>
-     * @return distance traveled in mm
-     */
-    public double getEncoderMotor1Distance()
-    {
-        return encoderMotor1.getEncoderDistance() * -1;
-    }
-
-    /**
-     * Gets the encoder distance for the back drive motor
-     * <p>
-     * @return distance traveled in mm
-     */
-    public double getEncoderMotor2Distance()
-    {
-        return encoderMotor2.getEncoderDistance();
-    }
-
-    /**
-     * Gets the average forward or reverse encoder distance
-     * <p>
-     * @return distance traveled in mm
-     */
-    public double getAverageForwardEncoderDistance()
-    {
-        return (getEncoderMotor3Distance() + getEncoderMotor1Distance()) / 2; 
-    }
+    
 
     /**
      * Call for the current Yaw angle from the internal NavX
@@ -296,15 +246,7 @@ public class DriveTrain extends SubsystemBase
         return navX.getRoll();
     }
 
-    /**
-     * Resets all encoders
-     */
-    public void resetEncoders()
-    {
-        encoderMotor3.reset();
-        encoderMotor1.reset();
-        encoderMotor2.reset();
-    }
+    
 
     /**
      * Sets the Yaw value back to zero

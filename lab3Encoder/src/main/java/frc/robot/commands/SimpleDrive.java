@@ -7,6 +7,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // WPI imports
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -49,6 +50,7 @@ public class SimpleDrive extends CommandBase
   @Override
   public void initialize() 
   {
+    drive.resetEncoders();
 
   }
 
@@ -60,6 +62,9 @@ public class SimpleDrive extends CommandBase
   public void execute() 
   {
     drive.setMotor1Speed(0.5); // Set motor speed to 50%
+    SmartDashboard.putNumber("Motor 1 rps", drive.getRpsSpeedMotor1());
+    SmartDashboard.putNumber("Motor 1 linear mm/s", drive.getSpeedMotor1());
+    SmartDashboard.putNumber("Encoder m1", drive.getEncoderMotor1Distance());
   }
 
   
@@ -80,6 +85,6 @@ public class SimpleDrive extends CommandBase
   @Override
   public boolean isFinished() 
   {
-    return false;
+    return  RobotContainer.driverJoystick.getXButton();
   }
 }

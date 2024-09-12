@@ -54,13 +54,14 @@ public final class Constants
     public static final double pulsePerRevolution   = 1440.00;
 
     // Gear Ratio between encoder and wheel 
-    public static final double gearRatio = 0.01639344262295081967213114754098;// 1/61;
+    public static final double gearRatio = 0.01639344262295081967213114754098; // 1/61;
 
     // Pulse per revolution of wheel
     public static final double wheelPulseRatio      = pulsePerRevolution * gearRatio;
 
     // Distance per tick
     public static final double wheelDistPerTick  = (Math.PI * 2 * wheelRadius) / pulsePerRevolution; //mm
+    public static final double wheelPerimiter = (Math.PI * 2 * wheelRadius);
     
     //Encoders Ports
     //Motor 1

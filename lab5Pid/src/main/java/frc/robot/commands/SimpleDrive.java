@@ -7,6 +7,9 @@
 
 package frc.robot.commands;
 
+
+
+import edu.wpi.first.wpilibj.Timer;
 // WPI imports
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -28,6 +31,7 @@ public class SimpleDrive extends CommandBase
 {
   //Grab the subsystem instance from RobotContainer
   private static final OmniDrive omniDrive = RobotContainer.omniDrive;
+  private Timer timer;
 
 
   /**
@@ -51,6 +55,10 @@ public class SimpleDrive extends CommandBase
   public void initialize() 
   {
 
+    timer = new Timer();
+    timer.reset();
+    System.out.println("Simple Drive started");
+  
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -61,6 +69,7 @@ public class SimpleDrive extends CommandBase
   public void execute() 
   {
     omniDrive.setMotor1Speed(0.5); // Set motor speed to 50%
+    
   }
 
   
@@ -71,7 +80,8 @@ public class SimpleDrive extends CommandBase
   public void end(boolean interrupted) 
   {
     omniDrive.setMotor1Speed(0.0); // Stop motor
-
+    System.out.println("Simple Drive finished");
+    
   }
 
   // Returns true when the command should end.
@@ -81,6 +91,6 @@ public class SimpleDrive extends CommandBase
   @Override
   public boolean isFinished() 
   {
-    return false;
+    return timer.hasElapsed(5);
   }
 }

@@ -25,3 +25,5 @@ Laboratório 5 - Programa com controle PID no Comando Drive to distance.
                   
                   2. Implentar PID no Comando para deslocamento lateral do robo.
 
+                  3. Implementar um PID no OmniDrive Subsystem.
+

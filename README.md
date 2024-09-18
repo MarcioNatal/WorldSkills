@@ -25,5 +25,11 @@ Laboratório 5 - Programa com controle PID no Comando Drive to distance.
                   
                   2. Implentar PID no Comando para deslocamento lateral do robo.
 
+Laboratório 6 - Programa com controle PID e Trapezoidal Profile no Comando Drive to distance.
+
+                Creates a new set of trapezoidal motion profile constraints
+                // Max velocity of xx meters per second
+                // Max acceleration of xx meters per second squared
+
                  
 

@@ -48,9 +48,12 @@ public final class Constants
     
     // Omni wheel radius
     public static final double wheelRadius          = 52; //mm  Diametro 105 mm
+    public static final double motorGearSpeedRpm = 100;
+    public static final double motorGearSpeedRps = motorGearSpeedRpm/60;
 
     // Encoder pulse per revolution
-    public static final double pulsePerRevolution   = 1440.00;
+    public static final double correcaoEncoder = 90;
+    public static final double pulsePerRevolution   = 1464.00-correcaoEncoder;
 
     // Gear Ratio between encoder and wheel 
     public static final double gearRatio = 0.01639344262295081967213114754098;// 1/61;
@@ -60,6 +63,10 @@ public final class Constants
 
     // Distance per tick
     public static final double wheelDistPerTick  = (Math.PI * 2 * wheelRadius) / pulsePerRevolution; //mm
+   
+    public static final double rot2MeterPerSec =   (Math.PI * 2 * wheelRadius) *motorGearSpeedRps; //rps * perimetro
+    public static final double dt = 2; // 2 secondes
+    public static final double acelMeterPerSecSquare = rot2MeterPerSec/dt; // dV/dt; em m/s²
     
     //Encoders Ports
     //Motor 1

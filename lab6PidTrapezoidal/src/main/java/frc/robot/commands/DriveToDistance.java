@@ -7,11 +7,11 @@
 
 package frc.robot.commands;
 
-
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.OmniDrive;
 
@@ -32,8 +32,9 @@ public class DriveToDistance extends CommandBase
 
   //Trapezoidal constants
   private static double kDt = 0.02; //The period between controller updates in seconds. 
-  private static double kMaxVelocity = 1.0;
-  private static double kMaxAcceleration = 0.5;
+  private static double kMaxVelocity = Constants.rot2MeterPerSec;
+  private static double kMaxAcceleration = Constants.acelMeterPerSecSquare;
+  
   
 
 
@@ -68,7 +69,7 @@ public class DriveToDistance extends CommandBase
   {
 
     System.out.println("Drive to distance started!");
-   
+    m_controller.reset(0, 0);
     omniDrive.resetEncoders();
     omniDrive.resetYaw();
   }

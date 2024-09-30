@@ -1,5 +1,10 @@
 Laboratorio 1 - Programa base para robotica móvel da World Skills usando um motor e modo autonomo.
 
+                Sugestao de exercicio
+
+                1. Criar autonomo para mover o robo para frente por 5s e depois lateralmente por 2s
+                2. Criar nova opçao de escolha de autonomo na aba da SmartDashboard.
+
 Laboratorio 2 - Programa para operaçao do robo em modo Teleoperado, criação de joystick.
 
                 Sugestao de exercicio

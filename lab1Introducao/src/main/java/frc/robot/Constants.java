@@ -22,7 +22,7 @@ public final class Constants
      */
     public static final int TITAN_ID        = 42;
     
-    //public static final int MOTOR           = 2;
+    
     /**
      * Motors
      */

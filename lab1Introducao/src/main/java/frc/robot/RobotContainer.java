@@ -8,8 +8,7 @@
 package frc.robot;
 
 //java imports
-import java.util.HashMap;
-import java.util.Map;
+
 
 //WPI imports
 import edu.wpi.first.wpilibj.GenericHID;
@@ -22,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.SimpleDrive;
 import frc.robot.commands.AutoCommand;
 import frc.robot.commands.DriveMotor;
-
 //Subsystem imports
 import frc.robot.subsystems.DriveTrain;
 
@@ -38,11 +36,12 @@ public class RobotContainer
   public  static DriveTrain drive;
 
   public static SimpleDrive simpleDrive; 
+  public static AutoCommand autoCommand;
 
 
   //Define the auto selector
-  public static SendableChooser<String> autoChooser;
-  public static Map<String, AutoCommand> autoMode = new HashMap<>();
+  private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+  //public static Map<String, AutoCommand> autoMode = new HashMap<>();
 
   
   /**
@@ -63,6 +62,16 @@ public class RobotContainer
      * Create an instance of the commands
      */
     simpleDrive = new SimpleDrive ();
+    autoCommand = new AutoCommand( );
+
+
+    /*********************************
+    * Declare objects to inititalize *
+    * Set the default commands       *
+    **********************************/
+    //set default command to autocommand
+    autoCommand.addRequirements(drive);
+    simpleDrive.addRequirements (drive);
 
      
     
@@ -79,6 +88,12 @@ public class RobotContainer
   private void configureButtonBindings() 
   {
 
+    // Setup SmartDashboard options
+
+    autoChooser.setDefaultOption("Auto Routine", new AutoCommand());
+    autoChooser.addOption("Auto Time", new DriveMotor( ));
+    SmartDashboard.putData(autoChooser);
+
   }
 
 
@@ -90,8 +105,7 @@ public class RobotContainer
     public Command getAutonomousCommand() 
     {
       //the call to return the autonomous routine that we want the scheduler to run.
-      String mode = RobotContainer.autoChooser.getSelected();
-      SmartDashboard.putString("Chosen Auto Mode", mode);
-      return autoMode.getOrDefault(mode, new DriveMotor());
+      
+      return autoChooser.getSelected();
     }
 }

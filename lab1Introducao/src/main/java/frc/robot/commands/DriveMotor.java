@@ -1,27 +1,26 @@
+/*----------------------------------------------------------------------------*/
+/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
+/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* must be accompanied by the FIRST BSD license file in the root directory of */
+/* the project.                                                               */
+/*----------------------------------------------------------------------------*/
+
 package frc.robot.commands;
 
-// import the SimpleDrive command
-import frc.robot.commands.SimpleDrive;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-// import the SimpleDrive command
-
-
-/**
- * DriveMotor class
- * <p>
- * This class creates the inline auto command to drive the motor
- */
-public class DriveMotor extends AutoCommand
+// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
+// information, see:
+// https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
+public class DriveMotor extends SequentialCommandGroup 
 {
-    /**
-     * Constructor
-     */
-    public DriveMotor()
-    {
-        /**
-         * Calls the SimpleDrive command and adds a 5 second timeout
-         * When the timeout is complete it will call the end() method in the SimpleDrive command
-         */
-        super(new SimpleDrive().withTimeout(5));
-    }
+  /**
+   * Creates a new DriveMotor.
+   */
+  public DriveMotor() {
+    // Add your commands in the super() call, e.g.
+    // super(new FooCommand(), new BarCommand());
+    addCommands(new SimpleDrive().withTimeout(5));
+    
+  }
 }

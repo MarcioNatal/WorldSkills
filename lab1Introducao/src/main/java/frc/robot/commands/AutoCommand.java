@@ -9,8 +9,9 @@ package frc.robot.commands;
 
 
 //WPI imports
-import edu.wpi.first.wpilibj2.command.Command;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -30,15 +31,9 @@ public class AutoCommand extends SequentialCommandGroup
   {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    super( );
+    // Add your commands in the super() call, e.g.
+    // super(new FooCommand(), new BarCommand());
+    addCommands(new DriveMotor(),new WaitCommand(2), new SimpleDrive().withTimeout(1.5));
   }
-  /**
-   * Overloaded Constructor to create inline commands
-   * <p>
-   * @param cmd The cmd to be executed
-   */
-  public AutoCommand(Command ... cmd)
-  {
-      super(cmd);
-  }
+  
 }

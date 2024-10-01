@@ -46,9 +46,11 @@ public final class Constants
      * Encoders
      */
     
-    // Omni wheel radius
-    public static final double wheelRadius          = 52; //mm  
-    public static final double wheelRadiusMeters    = wheelRadius/1000; 
+    //Dados das rodas omni em MILIMETRO
+    public static final double wheelDiameterMeter = 104; //milimetros
+    public static final double wheelRadius          = wheelDiameterMeter/2; //mm  52
+    public static final double wheelCircumferenceMeters= wheelDiameterMeter*Math.PI;// mm 
+
 
     // Encoder pulse per revolution
     public static final double pulsePerRevolution   = 1440.00;
@@ -59,9 +61,22 @@ public final class Constants
     // Pulse per revolution of wheel
     public static final double wheelPulseRatio      = pulsePerRevolution * gearRatio;
 
+    //Velocidade da redução
+    public static final double motorGearSpeedRpm = 100;
+    public static final double motorGearSpeedRps = motorGearSpeedRpm/60;
+    
     // Distance per tick
     public static final double wheelDistPerTick  = (Math.PI * 2 * wheelRadius) / pulsePerRevolution; //mm
     public static final double wheelPerimiter = (Math.PI * 2 * wheelRadius);
+    public static final double rot2MeterPerSec =   (Math.PI * 2 * wheelRadius) *motorGearSpeedRps; //rps * perimetro
+    public static final double dt = 2; // 2 secondes
+    public static final double acelMeterPerSecSquare = rot2MeterPerSec/dt; // dV/dt; em m/s²
+    
+
+    //Conversão de unidades de escalar e angular
+    public static final double encoderRot2Meter = gearRatio * Math.PI * wheelDiameterMeter; // milimetro/segundo
+    public static final double encoderRot2RadPerSec = gearRatio * 2 * Math.PI; // VELOCIDADE ANGULAR RAD/S
+    public static final double encoderRPM2MeterPerSec = encoderRot2Meter/60; // VELOCIDAE LINEAR MM/S
     
     //Encoders Ports
     //Motor 1

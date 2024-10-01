@@ -22,6 +22,6 @@ public class AutoCommand extends SequentialCommandGroup {
   {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    addCommands(new DriveMotor(omniDrive),new SimpleDrive().withTimeout(1.5));
+    addCommands(new MultiDrive(-0.3, 0.0, 0.0).withTimeout(3),new SimpleDrive().withTimeout(1.5));
   }
 }

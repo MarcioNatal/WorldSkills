@@ -69,14 +69,14 @@ public class RobotContainer
     //set default command to drive with joystick
 
       drive.setDefaultCommand (new RunCommand(
-      () -> drive.holonomicDrive (
+                              () -> drive.holonomicDrive (
                                   driverJoystick.getRawAxis(Constants.kDriverXAxis),
                                   driverJoystick.getRawAxis(Constants.kDriverYAxis),
                                   driverJoystick.getRawAxis(Constants.kDriverRotAxis)
-          ),
+                                  ),
                                   drive
                                   )
-        );
+                                  );
                                           
 
     

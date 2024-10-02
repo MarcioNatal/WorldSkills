@@ -8,7 +8,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -20,6 +20,6 @@ public class AutoCommand extends SequentialCommandGroup {
   public AutoCommand() {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    addCommands(new DriveMotor(), new WaitCommand(2),new SimpleDrive().withTimeout(1.5));
+    addCommands(new SimpleDrive().withTimeout(1.5));
   }
 }

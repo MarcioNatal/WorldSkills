@@ -29,7 +29,7 @@ public class AutoCommand extends SequentialCommandGroup
   {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    addCommands(new DriveMotor(), new SimpleDrive());
+    addCommands(new SimpleDrive().withTimeout(5), new SimpleDrive());
   }
   
 }

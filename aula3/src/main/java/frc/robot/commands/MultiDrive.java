@@ -11,7 +11,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.OmniDrive;
 
-public class MultiDrive extends CommandBase {
+public class MultiDrive extends CommandBase 
+{
   /**
    * Creates a new MultiDrive.
    */

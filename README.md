@@ -14,6 +14,14 @@ Laboratorio 2 - Programa para operaçao do robo em modo Teleoperado, criação d
 
 Laboratorio 3 - Programa para implementação da leitura de encoder e criação de métodos para medir velocidades e mostrar valores na Shuffleboard
 
+                Sugestao de exercicio
+
+                1. Criar um comando para girar o robo em determinado angulo e velocidade
+
+                2. Ler o NavX e mostrar o angulo na SmartDashboard
+
+                3. Criar um autonomo que movimente o robo a partir da distancia , angulo e velocidades desejadas.
+
 Laboratório 4 - Programa para implementação de autonomo, Sendable chooser para seleção de autonomo na Shuffleboard, Sequential Commandgroup
                 
                 Sugestao de exercicio

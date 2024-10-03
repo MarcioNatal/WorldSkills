@@ -11,11 +11,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.AutoCommand;
-import frc.robot.commands.AutoCommand2;
-import frc.robot.commands.DriveMotor;
-import frc.robot.commands.MultiDrive;
-import frc.robot.commands.SimpleDrive;
 
 import frc.robot.subsystems.OmniDrive;
  
@@ -32,11 +27,11 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
  public static OmniDrive omniDrive;
- private final SimpleDrive simpleDrive;
+ /*private final SimpleDrive simpleDrive;
  private final DriveMotor driveMotor;
  private final AutoCommand autoCommand;
  private final AutoCommand2 autoCommand2;
- private final MultiDrive multiDrive;
+ private final MultiDrive multiDrive;*/
 
  //Declara joystick
  public static XboxController driverJoystick;
@@ -64,12 +59,12 @@ public class RobotContainer {
      /**
      * Create an instance of the commands
      */
-    simpleDrive = new SimpleDrive ();
-    driveMotor = new DriveMotor( );
-    autoCommand = new AutoCommand();
+    /*simpleDrive = new SimpleDrive ();
+    driveMotor = new DriveMotor(omniDrive );
+    autoCommand = new AutoCommand(omniDrive);
 
-    autoCommand2 = new AutoCommand2();
-    multiDrive = new MultiDrive(0.0, 0.0, 0.0);
+    autoCommand2 = new AutoCommand2(omniDrive);
+    multiDrive = new MultiDrive(0.0, 0.0, 0.0);*/
 
 
     driverJoystick = new XboxController (Constants.kDriverControllerPort);
@@ -79,11 +74,11 @@ public class RobotContainer {
     * Set the default commands       *
     **********************************/
     //set default command to autocommand
-    simpleDrive.addRequirements(omniDrive);
+    /*simpleDrive.addRequirements(omniDrive);
     driveMotor.addRequirements(omniDrive);
     autoCommand.addRequirements(omniDrive);
     multiDrive.addRequirements(omniDrive);
-    autoCommand2.addRequirements(omniDrive);
+    autoCommand2.addRequirements(omniDrive);*/
 
 
     //set default command to drive with joystick
@@ -111,17 +106,17 @@ public class RobotContainer {
   {
     // Setup SmartDashboard options
 
-    autoChooser.setDefaultOption("Auto Routine", new AutoCommand());
-    autoChooser.addOption("Auto Time", new DriveMotor( ));
-    autoChooser.addOption("Auto Novo", new AutoCommand2());
+    //autoChooser.setDefaultOption("Auto Routine", new AutoCommand(omniDrive));
+    //autoChooser.addOption("Auto Time", new DriveMotor(omniDrive ));
+    //autoChooser.addOption("Auto Novo", new AutoCommand2());
     SmartDashboard.putData(autoChooser);
 
-    JoystickButton motorTempo = new JoystickButton(driverJoystick, XboxController.Button.kBumperLeft.value);
-    motorTempo.whenPressed(new DriveMotor());
+    //JoystickButton motorTempo = new JoystickButton(driverJoystick, XboxController.Button.kBumperLeft.value);
+    //motorTempo.whenPressed(new DriveMotor(omniDrive));
 
     //Liga o motor1 enquanto estiver pressionado o botao 
-    JoystickButton motor1Forward = new JoystickButton (driverJoystick,XboxController.Button.kBumperRight.value);
-    motor1Forward.whenPressed(new SimpleDrive());
+    //JoystickButton motor1Forward = new JoystickButton (driverJoystick,XboxController.Button.kBumperRight.value);
+    //motor1Forward.whenPressed(new SimpleDrive());
 
     
   }

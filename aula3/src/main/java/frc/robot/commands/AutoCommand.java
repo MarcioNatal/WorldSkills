@@ -7,6 +7,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.OmniDrive;
 
@@ -14,7 +15,8 @@ import frc.robot.subsystems.OmniDrive;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class AutoCommand extends SequentialCommandGroup {
+public class AutoCommand extends SequentialCommandGroup 
+{
   /**
    * Creates a new AutoCommand.
    */
@@ -22,6 +24,8 @@ public class AutoCommand extends SequentialCommandGroup {
   {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    addCommands(new MultiDrive(-0.3, 0.0, 0.0).withTimeout(3),new SimpleDrive().withTimeout(1.5));
+    addCommands(  new InstantCommand (omniDrive::resetGyro),
+                  new MultiDrive(-0.3, 0.0, 0.0),
+                  new SimpleDrive().withTimeout(1.5));
   }
 }

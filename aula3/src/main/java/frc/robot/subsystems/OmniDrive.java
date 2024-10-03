@@ -118,6 +118,10 @@ public class OmniDrive extends SubsystemBase
     encoderMotor3.reset();
 
   }
+  public double getGyroAngle()
+  {
+      return gyro.getAngle();
+  }
 
 
 
@@ -138,6 +142,26 @@ public class OmniDrive extends SubsystemBase
   {
       gyro.zeroYaw();
   }
+  /**
+   *  the headingDifference is always within the range of -180 to 180 degrees. 
+   * @param target
+   * @return headingDifference
+   */
+  public double getAngle (double target) 
+  {
+    double headingDifference = getGyroAngle() - target;
+
+    if (headingDifference > 180) 
+    {
+        headingDifference -= 360;
+    }
+    if (headingDifference < -180) 
+    {
+        headingDifference += 360;
+    }
+    return headingDifference;
+}
+
 
   public void setMotorSpeed(double speed)
   {

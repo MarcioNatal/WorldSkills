@@ -18,9 +18,11 @@ public class MultiDrive extends CommandBase
    */
   private static final OmniDrive omniDrive = RobotContainer.omniDrive;
 
-  double velocidade1;
-  double velocidade2;
-  double velocidade3;
+  private  final double velocidade1;
+  private  final double velocidade2;
+  private  final double velocidade3;
+  private double count = 0;
+  private boolean finish  = false;
   
   public MultiDrive(double speedM1, double speedM2, double speedM3) 
   {
@@ -57,6 +59,8 @@ public class MultiDrive extends CommandBase
   @Override
   public boolean isFinished() 
   {
-    return false;
+    if (count >100){ finish = true;}
+    count += count;
+    return finish;
   }
 }

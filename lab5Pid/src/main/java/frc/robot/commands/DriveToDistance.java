@@ -52,6 +52,7 @@ public class DriveToDistance extends CommandBase
 
     System.out.println("Drive to distance started!");
     pidController.reset();
+    pidController.setTolerance(5);
     omniDrive.resetEncoders();
     omniDrive.resetYaw();
   }
@@ -82,6 +83,6 @@ public class DriveToDistance extends CommandBase
     @Override
     public boolean isFinished() 
     {
-      return ((omniDrive.getAverageForwardEncoderDistance()) >= distanceSetpoint);
+      return pidController.atSetpoint();
     }
 }

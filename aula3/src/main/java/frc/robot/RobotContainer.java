@@ -12,16 +12,16 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import frc.robot.commands.DriveMotor;
-import frc.robot.commands.DriveToDistance;
 
-import frc.robot.commands.SimpleDrive;
+
+
+
 
 import frc.robot.subsystems.OmniDrive;
  
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+//import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -114,18 +114,18 @@ public class RobotContainer
   {
     // Setup SmartDashboard options
 
-    autoChooser.setDefaultOption("Auto Routine", new DriveToDistance());
-    autoChooser.addOption("Auto Time", new DriveMotor( omniDrive));
+    
+    //autoChooser.addOption("Auto Time", new DriveMotor( omniDrive));
     //autoChooser.addOption("Auto Novo", new AutoCommand2());
     //autoChooser.addOption("Auto Distancia", new DriveToDistance());
     SmartDashboard.putData(autoChooser);
 
-    JoystickButton motorTempo = new JoystickButton(driverJoystick, XboxController.Button.kBumperLeft.value);
-    motorTempo.whenPressed(new DriveMotor(omniDrive));
+    //JoystickButton motorTempo = new JoystickButton(driverJoystick, XboxController.Button.kBumperLeft.value);
+    //motorTempo.whenPressed(new DriveMotor(omniDrive));
 
     //Liga o motor1 enquanto estiver pressionado o botao 
-    JoystickButton motor1Forward = new JoystickButton (driverJoystick,XboxController.Button.kBumperRight.value);
-    motor1Forward.whenPressed(new SimpleDrive());
+    //JoystickButton motor1Forward = new JoystickButton (driverJoystick,XboxController.Button.kBumperRight.value);
+    //motor1Forward.whenPressed(new SimpleDrive());
 
     
   }

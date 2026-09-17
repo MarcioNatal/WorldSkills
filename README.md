@@ -67,6 +67,16 @@
 
 ---
 
+### 🟠 [Laboratório 9 - OmniDrive](./lab9OmniDrive)
+**Controle de movimentação omnidirecional para robôs com rodas omni**
+
+**Conceitos principais:**
+- Controle de direção e velocidade em múltiplos eixos
+- Movimentação omnidirecional
+- Integração dos comandos de movimento com o sistema do robô
+
+---
+
 ## 🚀 Quick Start
 
 1. Clone o repositório
@@ -85,6 +95,7 @@
 - **Encoder Feedback**
 - **PID Control**
 - **Motion Profiling**
+- **OmniDrive**
 
 ---
 
@@ -95,6 +106,7 @@ Ao completar todos os laboratórios, você será capaz de:
 - ✨ Implementar controle em tempo real
 - ✨ Trabalhar com sensores e feedback
 - ✨ Otimizar trajetórias com motion profiles
+- ✨ Controlar robôs com movimentação omnidirecional
 - ✨ Participar competitivamente em eventos WorldSkills
 
 ---

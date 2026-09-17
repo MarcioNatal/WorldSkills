@@ -29,6 +29,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
  public static OmniDrive omniDrive;
+ 
+
+ //Commands here
+ 
  private final SimpleDrive simpleDrive;
  private final DriveMotor driveMotor;
  private final AutoCommand autoCommand;
@@ -58,23 +62,19 @@ public class RobotContainer {
      /**
      * Create an instance of the commands
      */
-    simpleDrive = new SimpleDrive ();
-    driveMotor = new DriveMotor( );
-    autoCommand = new AutoCommand();
+    simpleDrive = new SimpleDrive (omniDrive);
+    driveMotor = new DriveMotor(omniDrive );
+    autoCommand = new AutoCommand(omniDrive);
 
-    autoCommand2 = new AutoCommand2();
-    multiDrive = new MultiDrive(0.0, 0.0, 0.0);
+    autoCommand2 = new AutoCommand2(omniDrive);
+    multiDrive = new MultiDrive(omniDrive,0.0, 0.0, 0.0);
 
     /*********************************
     * Declare objects to inititalize *
     * Set the default commands       *
     **********************************/
-    //set default command to autocommand
-    simpleDrive.addRequirements(omniDrive);
-    driveMotor.addRequirements(omniDrive);
-    autoCommand.addRequirements(omniDrive);
-    multiDrive.addRequirements(omniDrive);
-    autoCommand2.addRequirements(omniDrive);
+    
+    
 
 
 
@@ -90,9 +90,9 @@ public class RobotContainer {
   {
     // Setup SmartDashboard options
 
-    autoChooser.setDefaultOption("Auto Routine", new AutoCommand());
-    autoChooser.addOption("Auto Time", new DriveMotor( ));
-    autoChooser.addOption("Auto Novo", new AutoCommand2());
+    autoChooser.setDefaultOption("Auto Routine", new AutoCommand(omniDrive));
+    autoChooser.addOption("Auto Time", new DriveMotor(omniDrive ));
+    autoChooser.addOption("Auto Novo", new AutoCommand2(omniDrive));
     SmartDashboard.putData(autoChooser);
 
   }

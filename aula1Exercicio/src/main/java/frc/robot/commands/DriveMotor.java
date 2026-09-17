@@ -8,17 +8,22 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.OmniDrive;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class DriveMotor extends SequentialCommandGroup {
+public class DriveMotor extends SequentialCommandGroup 
+{
+  private final OmniDrive mOmniDrive;
   /**
    * Creates a new DriveMotor.
    */
-  public DriveMotor() {
+  public DriveMotor(OmniDrive omniDrive) 
+  {
+    this.mOmniDrive=omniDrive;
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    addCommands(new SimpleDrive().withTimeout(5));
+    addCommands(new SimpleDrive(mOmniDrive).withTimeout(5));
   }
 }

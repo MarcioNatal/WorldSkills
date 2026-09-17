@@ -24,9 +24,13 @@ import edu.wpi.first.wpilibj2.command.Command;
  * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
  * (including subsystems, commands, and button mappings) should be declared here.
  */
-public class RobotContainer {
+public class RobotContainer 
+{
   // The robot's subsystems and commands are defined here...
  private final OmniDrive omniDrive;
+
+
+ //Instantiate commands here
  private final SimpleDrive simpleDrive;
  private final DriveMotor driveMotor;
  private final AutoCommand autoCommand;
@@ -54,18 +58,15 @@ public class RobotContainer {
      /**
      * Create an instance of the commands
      */
-    simpleDrive = new SimpleDrive ();
-    driveMotor = new DriveMotor( );
-    autoCommand = new AutoCommand();
+    simpleDrive = new SimpleDrive (omniDrive);
+    driveMotor = new DriveMotor(omniDrive);
+    autoCommand = new AutoCommand(omniDrive);
 
     /*********************************
     * Declare objects to inititalize *
     * Set the default commands       *
     **********************************/
-    //set default command to autocommand
-    simpleDrive.addRequirements(omniDrive);
-    driveMotor.addRequirements(omniDrive);
-    autoCommand.addRequirements(omniDrive);
+    
 
 
 
@@ -81,8 +82,8 @@ public class RobotContainer {
   {
     // Setup SmartDashboard options
 
-    autoChooser.setDefaultOption("Auto Routine", new AutoCommand());
-    autoChooser.addOption("Auto Time", new DriveMotor( ));
+    autoChooser.setDefaultOption("Auto Routine", new AutoCommand(omniDrive));
+    autoChooser.addOption("Auto Time", new DriveMotor( omniDrive));
     SmartDashboard.putData(autoChooser);
 
   }

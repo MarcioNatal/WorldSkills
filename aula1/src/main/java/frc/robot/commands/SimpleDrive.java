@@ -14,12 +14,13 @@ public class SimpleDrive extends CommandBase {
   /**
    * Creates a new SimpleDrive.
    */
-  private static final OmniDrive drive = new OmniDrive();
+  private final  OmniDrive m_omniDrive; // = new OmniDrive();
 
-  public SimpleDrive() 
+  public SimpleDrive(OmniDrive omniDrive) 
   {
+    this.m_omniDrive = omniDrive;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(drive);
+    addRequirements(m_omniDrive);
   }
 
   // Called when the command is initially scheduled.
@@ -35,14 +36,14 @@ public class SimpleDrive extends CommandBase {
   @Override
   public void execute() 
   {
-    drive.setMotorSpeed(0.5);
+   m_omniDrive.setMotorSpeed(0.5);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) 
   {
-    drive.setMotorSpeed(0.0);
+    m_omniDrive.setMotorSpeed(0.0);
   }
 
 

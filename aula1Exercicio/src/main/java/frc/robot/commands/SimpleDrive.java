@@ -10,16 +10,18 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.OmniDrive;
 
-public class SimpleDrive extends CommandBase {
+public class SimpleDrive extends CommandBase 
+{
   /**
    * Creates a new SimpleDrive.
    */
-  private static final OmniDrive drive = new OmniDrive();
+  private final OmniDrive mOmnidrive;
 
-  public SimpleDrive() 
+  public SimpleDrive(OmniDrive omniDrive) 
   {
+    this.mOmnidrive = omniDrive;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(drive);
+    addRequirements(mOmnidrive);
   }
 
   // Called when the command is initially scheduled.
@@ -35,14 +37,14 @@ public class SimpleDrive extends CommandBase {
   @Override
   public void execute() 
   {
-    drive.setMotorSpeed(0.5);
+    mOmnidrive.setMotorSpeed(0.5);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) 
   {
-    drive.setMotorSpeed(0.0);
+    mOmnidrive.setMotorSpeed(0.0);
   }
 
 

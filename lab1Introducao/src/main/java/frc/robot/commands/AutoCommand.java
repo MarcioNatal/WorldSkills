@@ -11,7 +11,8 @@ package frc.robot.commands;
 //WPI imports
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+
+import frc.robot.subsystems.DriveTrain;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -24,16 +25,18 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
  */
 public class AutoCommand extends SequentialCommandGroup 
 {
+  private final DriveTrain driveTrain;
   /**
    * Creates a new AutoCommand.
    */
-  public AutoCommand() 
+  public AutoCommand( DriveTrain driveSubsystem) 
   {
+    this.driveTrain = driveSubsystem;
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    addCommands( new SimpleDrive().withTimeout(1.5));
+    addCommands( new SimpleDrive(driveTrain).withTimeout(1.5));
   }
   
 }

@@ -33,10 +33,10 @@ import frc.robot.subsystems.DriveTrain;
 public class RobotContainer 
 {
   // The robot's subsystems and commands are defined here...
-  public  static DriveTrain drive;
+  private final DriveTrain driveSubsystem;
 
-  public static SimpleDrive simpleDrive; 
-  public static AutoCommand autoCommand;
+  private final SimpleDrive simpleDrive; 
+  private final AutoCommand autoCommand;
 
 
   //Define the auto selector
@@ -55,24 +55,19 @@ public class RobotContainer
     /**
      * Create an instance of the subsystems
      */
-    drive = new DriveTrain();
+    driveSubsystem = new DriveTrain();
 
 
      /**
      * Create an instance of the commands
      */
-    simpleDrive = new SimpleDrive ();
-    autoCommand = new AutoCommand( );
+    simpleDrive = new SimpleDrive (driveSubsystem);
+    autoCommand = new AutoCommand( driveSubsystem);
 
 
-    /*********************************
-    * Declare objects to inititalize *
-    * Set the default commands       *
-    **********************************/
+  
     //set default command to autocommand
-    autoCommand.addRequirements(drive);
-    simpleDrive.addRequirements (drive);
-
+    
      
     
     // Configure the button bindings
@@ -90,8 +85,8 @@ public class RobotContainer
 
     // Setup SmartDashboard options
 
-    autoChooser.setDefaultOption("Auto Routine", new AutoCommand());
-    autoChooser.addOption("Auto Time", new DriveMotor( ));
+    autoChooser.setDefaultOption("Auto Routine", new AutoCommand( driveSubsystem));
+    autoChooser.addOption("Auto Time", new DriveMotor(driveSubsystem));
     SmartDashboard.putData(autoChooser);
 
   }

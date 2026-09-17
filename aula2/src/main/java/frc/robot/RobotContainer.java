@@ -11,12 +11,12 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import frc.robot.commands.MultiDrive;
 import frc.robot.subsystems.OmniDrive;
  
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -26,15 +26,12 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
- public static OmniDrive omniDrive;
- /*private final SimpleDrive simpleDrive;
- private final DriveMotor driveMotor;
- private final AutoCommand autoCommand;
- private final AutoCommand2 autoCommand2;
- private final MultiDrive multiDrive;*/
+ private final OmniDrive omniDrive = new OmniDrive();
+ 
+ private final MultiDrive multiDrive = new MultiDrive(omniDrive, 0, 0, 0);
 
  //Declara joystick
- public static XboxController driverJoystick;
+ public static XboxController driverJoystick = new XboxController (Constants.kDriverControllerPort);
 
  //Define the auto selector
  private final SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -50,41 +47,22 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    /**
-     * Create an instance of the subsystems
-     */
-    omniDrive = new OmniDrive();
+    
 
-
-     /**
-     * Create an instance of the commands
-     */
-    /*simpleDrive = new SimpleDrive ();
-    driveMotor = new DriveMotor(omniDrive );
-    autoCommand = new AutoCommand(omniDrive);
-
-    autoCommand2 = new AutoCommand2(omniDrive);
-    multiDrive = new MultiDrive(0.0, 0.0, 0.0);*/
-
-
-    driverJoystick = new XboxController (Constants.kDriverControllerPort);
-
+    
     /*********************************
     * Declare objects to inititalize *
     * Set the default commands       *
     **********************************/
     //set default command to autocommand
-    /*simpleDrive.addRequirements(omniDrive);
-    driveMotor.addRequirements(omniDrive);
-    autoCommand.addRequirements(omniDrive);
-    multiDrive.addRequirements(omniDrive);
-    autoCommand2.addRequirements(omniDrive);*/
+    
+    
 
 
     //set default command to drive with joystick
 
     omniDrive.setDefaultCommand (new RunCommand(
-                                            () -> omniDrive.holonomicDrive (
+                                () -> omniDrive.holonomicDrive (
                                                 driverJoystick.getRawAxis(Constants.kDriverXAxis),
                                                 driverJoystick.getRawAxis(Constants.kDriverYAxis),
                                                 driverJoystick.getRawAxis(Constants.kDriverRotAxis)),

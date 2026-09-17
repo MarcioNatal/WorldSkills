@@ -28,7 +28,7 @@ import frc.robot.subsystems.DriveTrain;
 public class SimpleDrive extends CommandBase 
 {
   //Grab the subsystem instance from RobotContainer
-  private static final DriveTrain drive = RobotContainer.drive;
+  private final DriveTrain drive ;
 
  
 
@@ -39,8 +39,9 @@ public class SimpleDrive extends CommandBase
   /**
    * Creates a new SimpleDrive.
    */
-  public SimpleDrive() 
+  public SimpleDrive( DriveTrain driveSubsystem) 
   {
+    this.drive = driveSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drive); // Adds the subsystem to the command
   }

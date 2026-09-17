@@ -16,7 +16,7 @@ public class MultiDrive extends CommandBase
   /**
    * Creates a new MultiDrive.
    */
-  private static final OmniDrive omniDrive = RobotContainer.omniDrive;
+  private final OmniDrive omniDrive ;
 
   private  final double velocidade1;
   private  final double velocidade2;
@@ -24,8 +24,9 @@ public class MultiDrive extends CommandBase
   private double count = 0;
   private boolean finish  = false;
   
-  public MultiDrive(double speedM1, double speedM2, double speedM3) 
+  public MultiDrive(OmniDrive mOmniDrive,double speedM1, double speedM2, double speedM3) 
   {
+    this.omniDrive = mOmniDrive;
     velocidade1 = speedM1;
     velocidade2 = speedM2;
     velocidade3 = speedM3;

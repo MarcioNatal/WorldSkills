@@ -1,23 +1,38 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.studica.frc.TitanQuad;
-import com.studica.frc.TitanQuadEncoder;
+
 import com.kauailabs.navx.frc.AHRS;
+import com.studica.frc.Titan;
 
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import frc.robot.Constants.DriveConstants;
 
-public class OmnidriveSubsystem extends SubsystemBase {
-    private final TitanQuad motor1;
-    private final TitanQuad motor2;
-    private final TitanQuad motor3;
+public class OmnidriveSubsystem extends SubsystemBase 
+{
+/**
+ * Declare the main Titan object
+ */
+    private final Titan titan0;
 
-    private final TitanQuadEncoder encoder1;
-    private final TitanQuadEncoder encoder2;
-    private final TitanQuadEncoder encoder3;
+/**
+ * Declare the motors of each Titan
+ * Each object conforms with WPILib SpeedController class for integration with built-in libs
+ */
+
+    private final Titan.Motor motor1;
+    private final Titan.Motor motor2;
+    private final Titan.Motor motor3;
+
+/**
+ * Declare the encoders of each Titan
+ * Each object conforms with WPILib Encoder class for integration with built-in libs
+ */
+    private final Titan.Encoder encoder1;
+    private final Titan.Encoder encoder2;
+    private final Titan.Encoder encoder3;
     
     private final AHRS ahrs;
 
@@ -31,28 +46,50 @@ public class OmnidriveSubsystem extends SubsystemBase {
     private final PIDController pid2 = new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD);
     private final PIDController pid3 = new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD);
 
-    public OmnidriveSubsystem() {
-        motor1 = new TitanQuad(DriveConstants.kTitanCanId, DriveConstants.kMotor1Channel); 
-        motor2 = new TitanQuad(DriveConstants.kTitanCanId, DriveConstants.kMotor2Channel);
-        motor3 = new TitanQuad(DriveConstants.kTitanCanId, DriveConstants.kMotor3Channel);
+    public OmnidriveSubsystem() 
+    {
+        /**
+         * Create the main Titan instances
+         */
+        titan0 = new Titan(DriveConstants.kTitanCanId);
 
-        motor1.setInverted(false);
-        motor2.setInverted(false);
-        motor3.setInverted(false);
+        /**
+         * Get motor instances and assign to objects
+         */
+       
+        motor1 = titan0.getMotor(DriveConstants.kMotor1Channel); 
+        motor2 = titan0.getMotor(DriveConstants.kMotor2Channel);
+        motor3 = titan0.getMotor(DriveConstants.kMotor3Channel);
 
-        // Encoders em quadratura do TitanQuad (um por canal de motor)
-        encoder1 = new TitanQuadEncoder(motor1, DriveConstants.kEncoder1Channel,
-                                        DriveConstants.kEncoderDistancePerTick);
-        encoder2 = new TitanQuadEncoder(motor2, DriveConstants.kEncoder2Channel,
-                                        DriveConstants.kEncoderDistancePerTick);
-        encoder3 = new TitanQuadEncoder(motor3, DriveConstants.kEncoder3Channel,
-                                        DriveConstants.kEncoderDistancePerTick);
+        
 
+        /**
+         * Get encoder instances and assign to objects
+         */
+        encoder1 = titan0.getEncoder( DriveConstants.kEncoder1Channel,DriveConstants.kEncoderDistancePerTick);
+        encoder2 = titan0.getEncoder(DriveConstants.kEncoder2Channel,DriveConstants.kEncoderDistancePerTick);
+        encoder3 = titan0.getEncoder(DriveConstants.kEncoder3Channel,DriveConstants.kEncoderDistancePerTick);
+
+        motorSettings();
         resetEncoders();
 
         // Inicializa a navX IMU na porta MXP da placa VMX-pi
         ahrs = new AHRS(SPI.Port.kMXP);
         resetHeading();
+    }
+
+    @Override
+    public void periodic() 
+    {
+        // This method will be called once per scheduler run
+    }
+
+    public void motorSettings()
+    {
+        motor1.setInverted(false);
+        motor2.setInverted(false);
+        motor3.setInverted(false);
+
     }
 
     /**
@@ -73,9 +110,9 @@ public class OmnidriveSubsystem extends SubsystemBase {
      */
     public double[] getEncoderDistances() 
     {
-        return new double[] { encoder1.getEncoderDistance(),
-                              encoder2.getEncoderDistance(),
-                              encoder3.getEncoderDistance() };
+        return new double[] { encoder1.getDistance(),
+                              encoder2.getDistance(),
+                              encoder3.getDistance() };
     }
 
     /**
@@ -101,11 +138,18 @@ public class OmnidriveSubsystem extends SubsystemBase {
         return new double[] { dx, dy };
     }
 
+    /**
+     * 
+     * @return accumulated IMU yaw angle
+     */
     public double getHeading() 
     {
         return ahrs.getAngle();
     }
 
+    /**
+     * Reset yaw 
+     */
     public void resetHeading() 
     {
         ahrs.reset();
@@ -148,7 +192,10 @@ public class OmnidriveSubsystem extends SubsystemBase {
         motor1.set(output1);
         motor2.set(output2);
         motor3.set(output3);
+    
     }
+
+  
 
     /**
      * Movimentação orientada ao campo (Field-Oriented Drive)
@@ -165,6 +212,9 @@ public class OmnidriveSubsystem extends SubsystemBase {
         driveRobotOriented(robotVx, robotVy, smoothWz);
     }
 
+    /**
+     * Stop motors and reset PIDControllers
+     */
     public void stop() 
     {
         motor1.set(0);
@@ -180,4 +230,5 @@ public class OmnidriveSubsystem extends SubsystemBase {
         yLimiter.reset(0.0);
         zLimiter.reset(0.0);
     }
+
 }

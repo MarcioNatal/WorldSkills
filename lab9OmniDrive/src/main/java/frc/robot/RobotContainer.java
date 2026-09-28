@@ -10,12 +10,15 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.DriveDistanceCommand;
 import frc.robot.commands.SquareAutoCommand;
 import frc.robot.subsystems.OmnidriveSubsystem;
 
@@ -30,8 +33,17 @@ public class RobotContainer
 {
   // The robot's subsystems and commands are defined here...
   private final OmnidriveSubsystem driveSubsystem = new OmnidriveSubsystem();
+
   private final Joystick joystick = new Joystick(OIConstants.kJoystickPort);
 
+  //Declare all commands here
+  private final DriveDistanceCommand driveDistanceCommand = new DriveDistanceCommand(driveSubsystem,0.0,  0.0, 0.0);
+
+  private final SquareAutoCommand squareAutoCommand = new SquareAutoCommand(driveSubsystem);
+
+
+
+  private final SendableChooser<Command> autoChooser;
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -39,6 +51,9 @@ public class RobotContainer
   public RobotContainer() 
   {
     // Configure the button bindings
+
+    autoChooser = new SendableChooser<>();
+
     configureButtonBindings();
 
     configureDefaultCommands();
@@ -70,10 +85,26 @@ public class RobotContainer
    */
   private void configureButtonBindings()
   {
+    /*********************
+     * chooserAuto setup *
+     *********************/
+    // Add options to the chooser
+    // -> chooserAuto.addOption("Auto1Piece", auto1Piece);
+    // Add to choices to smart dashboard
+    SmartDashboard.putData("Autonomous", autoChooser);
+    
+    // Autonomous Default option- Padrão é nenhum
+    autoChooser.setDefaultOption("Autonomous None", new InstantCommand());
+    
     // Gatilho do joystick: zera a referencia de campo (heading atual vira 0 graus)
-    new JoystickButton(joystick, OIConstants.kResetGyroButton)
-                      .whenPressed(new InstantCommand(driveSubsystem::resetHeading));
+    new JoystickButton(joystick, OIConstants.kResetGyroButton).whenPressed(new InstantCommand(driveSubsystem::resetHeading));
+
+
+    autoChooser.addOption("Auto 1", new DriveDistanceCommand(driveSubsystem, 1, -1, 0.2));
+    autoChooser.addOption("Auto 2", new SquareAutoCommand(driveSubsystem));
   }
+
+
 
   private void configureDefaultCommands() 
   {
@@ -97,7 +128,7 @@ public class RobotContainer
    */
   public Command getAutonomousCommand() 
   {
-    // Quadrado de 50 cm de lado, por translacao pura
-    return new SquareAutoCommand(driveSubsystem);
+    
+    return autoChooser.getSelected();
   }
 }

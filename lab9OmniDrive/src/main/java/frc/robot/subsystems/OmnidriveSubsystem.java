@@ -192,6 +192,7 @@ public class OmnidriveSubsystem extends SubsystemBase
         motor1.set(output1);
         motor2.set(output2);
         motor3.set(output3);
+        
     
     }
 
@@ -200,7 +201,8 @@ public class OmnidriveSubsystem extends SubsystemBase
     /**
      * Movimentação orientada ao campo (Field-Oriented Drive)
      */
-    public void driveFieldOriented(double fieldVx, double fieldVy, double wz) {
+    public void driveFieldOriented(double fieldVx, double fieldVy, double wz) 
+    {
         double smoothVx = xLimiter.calculate(fieldVx);
         double smoothVy = yLimiter.calculate(fieldVy);
         double smoothWz = zLimiter.calculate(wz);

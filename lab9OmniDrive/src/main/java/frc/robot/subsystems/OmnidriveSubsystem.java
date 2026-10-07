@@ -8,6 +8,9 @@ import com.studica.frc.Titan;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 
 public class OmnidriveSubsystem extends SubsystemBase 
@@ -46,6 +49,8 @@ public class OmnidriveSubsystem extends SubsystemBase
     private final PIDController pid2 = new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD);
     private final PIDController pid3 = new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD);
 
+    private final Odometry odometry = new Odometry();
+
     public OmnidriveSubsystem() 
     {
         /**
@@ -81,7 +86,57 @@ public class OmnidriveSubsystem extends SubsystemBase
     @Override
     public void periodic() 
     {
-        // This method will be called once per scheduler run
+        // Odometria: precisa rodar todo ciclo, senao o deslocamento entre duas
+        // atualizacoes vira uma reta e a curva e perdida.
+        double[] d = getEncoderDistances();
+        odometry.update(getRotation2d(), d[0], d[1], d[2]);
+
+        publishTelemetry();
+    }
+
+    /**
+     * Manda a pose estimada para o SmartDashboard/Shuffleboard.
+     */
+    private void publishTelemetry() 
+    {
+        Pose2d pose = getPose();
+        SmartDashboard.putNumber("Odom X (m)", pose.getTranslation().getX());
+        SmartDashboard.putNumber("Odom Y (m)", pose.getTranslation().getY());
+        SmartDashboard.putNumber("Odom Theta (deg)", pose.getRotation().getDegrees());
+        SmartDashboard.putNumber("Odom Vx (m/s)", odometry.getVxMetersPerSecond());
+        SmartDashboard.putNumber("Odom Vy (m/s)", odometry.getVyMetersPerSecond());
+    }
+
+    /**
+     * Pose estimada do robo no campo, em metros e com rotacao anti-horaria
+     * positiva (convencao da WPILib).
+     *
+     * @return pose atual
+     */
+    public Pose2d getPose() 
+    {
+        return odometry.getPose();
+    }
+
+    /**
+     * Declara em que ponto do campo o robo esta. Usar no inicio do autonomo ou
+     * quando houver uma referencia externa (visao, parede, marcacao do tapete).
+     * A IMU nao precisa ser zerada junto.
+     *
+     * @param pose pose verdadeira do robo
+     */
+    public void resetPose(Pose2d pose) 
+    {
+        odometry.resetPose(pose, getRotation2d());
+    }
+
+    /**
+     * Zera a pose: o robo passa a se considerar na origem do campo, apontando
+     * para 0 grau.
+     */
+    public void resetOdometry() 
+    {
+        resetPose(new Pose2d());
     }
 
     public void motorSettings()
@@ -101,6 +156,10 @@ public class OmnidriveSubsystem extends SubsystemBase
         encoder1.reset();
         encoder2.reset();
         encoder3.reset();
+
+        // Sem isso o salto da leitura (valor atual -> zero) entraria na
+        // odometria como um deslocamento gigante para tras.
+        odometry.resetWheelBaseline(0.0, 0.0, 0.0);
     }
 
     /**
@@ -117,25 +176,17 @@ public class OmnidriveSubsystem extends SubsystemBase
 
     /**
      * Deslocamento do robo desde o ultimo resetEncoders(), no referencial do
-     * proprio robo, obtido invertendo a cinematica holonomica das 3 rodas:
-     *
-     *   d1 = -dx + dtheta
-     *   d2 =  0.5*dx + (raiz(3)/2)*dy + dtheta
-     *   d3 =  0.5*dx - (raiz(3)/2)*dy + dtheta
-     *
-     * Somando as tres: d1+d2+d3 = 3*dtheta, e o resto sai por substituicao.
+     * proprio robo. A inversao da cinematica das 3 rodas esta em
+     * {@link Odometry#forwardKinematics(double, double, double)}.
      *
      * @return vetor {dx, dy} em metros
      */
     public double[] getRobotDisplacement() 
     {
         double[] d = getEncoderDistances();
+        double[] delta = Odometry.forwardKinematics(d[0], d[1], d[2]);
 
-        double dTheta = (d[0] + d[1] + d[2]) / 3.0;
-        double dx = dTheta - d[0];
-        double dy = (d[1] - d[2]) / Math.sqrt(3.0);
-
-        return new double[] { dx, dy };
+        return new double[] { delta[0], delta[1] };
     }
 
     /**
@@ -148,11 +199,26 @@ public class OmnidriveSubsystem extends SubsystemBase
     }
 
     /**
-     * Reset yaw 
+     * Rumo do robo no formato da WPILib: anti-horaverio positivo. O sinal da IMU
+     * e controlado por kGyroReversed.
+     *
+     * @return rumo acumulado como Rotation2d
+     */
+    public Rotation2d getRotation2d() 
+    {
+        return Rotation2d.fromDegrees(DriveConstants.kGyroReversed ? -getHeading() : getHeading());
+    }
+
+    /**
+     * Reset yaw. Redefine o referencial de campo: a posicao e o rumo atuais
+     * passam a ser a origem (0, 0) apontando para 0 grau. Como o eixo de
+     * referencia girou, a pose antiga perde sentido e a odometria e zerada
+     * junto - senao x e y ficariam num frame e theta em outro.
      */
     public void resetHeading() 
     {
         ahrs.reset();
+        odometry.resetPose(new Pose2d(), getRotation2d());
     }
 
     /**
@@ -207,9 +273,11 @@ public class OmnidriveSubsystem extends SubsystemBase
         double smoothVy = yLimiter.calculate(fieldVy);
         double smoothWz = zLimiter.calculate(wz);
 
-        double angleRad = Math.toRadians(-getHeading());
-        double robotVx = smoothVx * Math.cos(angleRad) - smoothVy * Math.sin(angleRad);
-        double robotVy = smoothVx * Math.sin(angleRad) + smoothVy * Math.cos(angleRad);
+        // Rotacao campo -> robo: gira o vetor de -theta. Mesma fonte de rumo
+        // que a odometria usa, para as duas nao divergirem de convencao.
+        Rotation2d angle = getRotation2d();
+        double robotVx =  smoothVx * angle.getCos() + smoothVy * angle.getSin();
+        double robotVy = -smoothVx * angle.getSin() + smoothVy * angle.getCos();
 
         driveRobotOriented(robotVx, robotVy, smoothWz);
     }

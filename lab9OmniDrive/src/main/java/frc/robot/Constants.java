@@ -38,6 +38,17 @@ public final class Constants
         public static final double kEncoderDistancePerTick =
                 (Math.PI * kWheelDiameterMeters) / kEncoderTicksPerRevolution;
 
+        // CONFERIR NO HARDWARE: distancia do centro do robo ao centro de cada
+        // roda, em metros. So entra na odometria, para converter o arco de
+        // rotacao medido pelas rodas em radianos.
+        public static final double kRobotRadiusMeters = 0.150;
+
+        // Sinal da IMU: false = getAngle() ja e anti-horario positivo, que e a
+        // convencao da WPILib. Valor confirmado no robo - e o que faz o
+        // field-oriented apontar certo. Esta flag vale para a odometria E para
+        // o driveFieldOriented ao mesmo tempo, entao os dois nunca divergem.
+        public static final boolean kGyroReversed = false;
+
         // Limite nominal do motor DC Maverick com caixa de redução (RPM)
         public static final double kMaxRPM = 150.0;
 

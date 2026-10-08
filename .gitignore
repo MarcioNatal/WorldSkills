@@ -20,7 +20,7 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs
+# Virtual machine crash logs
 hs_err_pid*
 crash.log
 
@@ -46,6 +46,7 @@ dependency-reduced-pom.xml
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
 .flattened-pom.xml
+.m2/
 
 # Gradle
 .gradle/
@@ -77,11 +78,23 @@ tmp/
 *~.nib
 local.properties
 
-# Misc
-*.orig
+# OS-specific
+Thumbs.db
+Desktop.ini
+
+# Application/local config
+application-local.properties
+application-dev.properties
+local.env
 .env
 .env.local
 .env.*.local
+
+# Test coverage / reports
+.jacoco/
+jacoco.exec
+coverage/
+coverage-reports/
 
 # Python (since the repo also contains Python)
 __pycache__/
@@ -119,3 +132,6 @@ coverage.xml
 venv/
 ENV/
 env/
+
+# Node / JS (common in mixed repos)
+node_modules/

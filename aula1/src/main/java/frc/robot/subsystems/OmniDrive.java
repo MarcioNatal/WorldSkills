@@ -7,7 +7,7 @@
 
 package frc.robot.subsystems;
 
-import com.studica.frc.TitanQuad;
+import com.studica.frc.Titan;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -21,12 +21,14 @@ public class OmniDrive extends SubsystemBase
   /**
      * Motors
      */
-    private TitanQuad motor;
+    private Titan titan;
+    private Titan.Motor motor;
 
   public OmniDrive() 
   {
 
-      motor = new TitanQuad(Constants.TITAN_ID, Constants.M1);
+      titan = new Titan(Constants.TITAN_ID);
+      motor = titan.getMotor(Constants.M1);
   }
 
   @Override

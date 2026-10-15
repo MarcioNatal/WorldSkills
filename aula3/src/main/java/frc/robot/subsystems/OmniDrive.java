@@ -8,7 +8,7 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.studica.frc.TitanQuad;
+import com.studica.frc.Titan;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
@@ -25,15 +25,16 @@ public class OmniDrive extends SubsystemBase
   /**
      * Motors
      */
-    private TitanQuad motor1;
-    private TitanQuad motor2;
-    private TitanQuad motor3;
+    private Titan titan;
+    private Titan.Motor motor1;
+    private Titan.Motor motor2;
+    private Titan.Motor motor3;
 
     /**
      * Declare Encoders
      */
 
-    //private TitanQuadEncoder encoderMotor1;
+    //private Titan.Encoder encoderMotor1;
     
     private final Encoder encoderMotor1; 
     private final Encoder encoderMotor2;
@@ -46,9 +47,10 @@ public class OmniDrive extends SubsystemBase
   public OmniDrive() 
   {
 
-      motor1 = new TitanQuad(Constants.TITAN_ID, Constants.M1);
-      motor2 = new TitanQuad(Constants.TITAN_ID, Constants.M2);
-      motor3 = new TitanQuad(Constants.TITAN_ID, Constants.M3);
+      titan = new Titan(Constants.TITAN_ID);
+      motor1 = titan.getMotor(Constants.M1);
+      motor2 = titan.getMotor(Constants.M2);
+      motor3 = titan.getMotor(Constants.M3);
 
       gyro = new AHRS (SPI.Port.kMXP);
 

@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 //Vendor imports
-import com.studica.frc.TitanQuad;
+import com.studica.frc.Titan;
 import com.kauailabs.navx.frc.AHRS;
 
 import frc.robot.Constants;
@@ -30,9 +30,10 @@ public class OmniDrive extends SubsystemBase {
     /**
      * Declare Motors
      */
-    private TitanQuad motor1; // right motor
-    private TitanQuad motor2; // back motor
-    private TitanQuad motor3; // left motor
+    private Titan titan;
+    private Titan.Motor motor1; // right motor
+    private Titan.Motor motor2; // back motor
+    private Titan.Motor motor3; // left motor
 
 
    
@@ -40,7 +41,7 @@ public class OmniDrive extends SubsystemBase {
      * Declare Encoders
      */
 
-    //private TitanQuadEncoder encoderMotor1;
+    //private Titan.Encoder encoderMotor1;
     
     private final Encoder encoderMotor1; 
     private final Encoder encoderMotor2;
@@ -69,9 +70,10 @@ public class OmniDrive extends SubsystemBase {
      * Motors
      */
     
-    motor1 = new TitanQuad(Constants.TITAN_ID, Constants.M1);
-    motor2 = new TitanQuad(Constants.TITAN_ID, Constants.M2);
-    motor3 = new TitanQuad(Constants.TITAN_ID, Constants.M3);
+    titan = new Titan(Constants.TITAN_ID);
+    motor1 = titan.getMotor(Constants.M1);
+    motor2 = titan.getMotor(Constants.M2);
+    motor3 = titan.getMotor(Constants.M3);
 
    
 

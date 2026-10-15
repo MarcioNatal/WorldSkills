@@ -16,16 +16,22 @@ public class DriveToDistance extends CommandBase
   //Grab the subsystem instance from RobotContainer
   private static final OmniDrive drive = RobotContainer.drive;
 
-  private double distance = 500;
+  private static final double MILIMETROS_POR_METRO = 1000.0;
+
+  // Alvo em milimetros - os encoders reportam a distancia em mm
+  private double distance = 0;
 
   /**
    * Creates a new DriveToDistance.
+   * <p>
+   * @param metros distancia a percorrer, em METROS (convertida para mm internamente)
    */
-  public DriveToDistance() 
+  public DriveToDistance(double metros) 
   {
     // Use addRequirements() here to declare subsystem dependencies.
     
     addRequirements(drive); // Adds the subsystem to the command
+    distance = metros * MILIMETROS_POR_METRO;
   }
 
   // Called when the command is initially scheduled.

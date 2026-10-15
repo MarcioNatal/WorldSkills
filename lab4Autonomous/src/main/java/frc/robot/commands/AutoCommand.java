@@ -35,7 +35,7 @@ public class AutoCommand extends SequentialCommandGroup
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
     //super( );
-    addCommands(new DriveToDistance(500), new SimpleDrive().withTimeout(5));
+    addCommands(new DriveToDistance(0.5), new SimpleDrive().withTimeout(5));
 
   }
   /**

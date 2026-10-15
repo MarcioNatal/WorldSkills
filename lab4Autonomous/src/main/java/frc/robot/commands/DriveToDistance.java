@@ -17,18 +17,23 @@ public class DriveToDistance extends CommandBase
   //Grab the subsystem instance from RobotContainer
   private static final OmniDrive omniDrive = RobotContainer.omniDrive;
 
+  private static final double MILIMETROS_POR_METRO = 1000.0;
+
+  // Alvo em milimetros - os encoders reportam a distancia em mm
   private double distance = 0;
   //private boolean finish = false;
 
   /**
    * Creates a new DriveToDistance.
+   * <p>
+   * @param metros distancia a percorrer, em METROS (convertida para mm internamente)
    */
   public DriveToDistance(double metros ) 
   {
     // Use addRequirements() here to declare subsystem dependencies.
     
     addRequirements(omniDrive); // Adds the subsystem to the command
-    distance = metros;
+    distance = metros * MILIMETROS_POR_METRO;
   }
 
   // Called when the command is initially scheduled.
@@ -46,7 +51,7 @@ public class DriveToDistance extends CommandBase
     //
     omniDrive.holonomicDrive(0.0, -0.5, 0.0);
      
-    SmartDashboard.putNumber("Distancia Percorrida", ((omniDrive.getEncoderMotor1Distance()+ (-omniDrive.getEncoderMotor3Distance()))/2) );
+    SmartDashboard.putNumber("Distancia Percorrida", omniDrive.getAverageForwardEncoderDistance());
     
 
   }
@@ -62,6 +67,6 @@ public class DriveToDistance extends CommandBase
     @Override
     public boolean isFinished() 
     {
-      return (omniDrive.getEncoderMotor1Distance()+ (-omniDrive.getEncoderMotor3Distance()))/2 >= distance;
+      return omniDrive.getAverageForwardEncoderDistance() >= distance;
     }
 }

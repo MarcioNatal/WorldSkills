@@ -27,13 +27,13 @@ public class Labyrinth extends SequentialCommandGroup
   {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    addCommands(new DriveToDistance(400), 
+    addCommands(new DriveToDistance(0.4), 
                 new Turn(45),
-                new DriveToDistance(600),
+                new DriveToDistance(0.6),
                 new Turn(45),
-                new DriveToDistance(200),
+                new DriveToDistance(0.2),
                 new Turn(90),
-                new DriveToDistance(800)
+                new DriveToDistance(0.8)
 
 
                 //new Turn(45)

@@ -51,13 +51,13 @@ public final class Constants
     public static final double pulsePerRevolution   = 1440;
 
     // Gear Ratio between encoder and wheel 
-    public static final double gearRatio            = 1/61;
+    public static final double gearRatio            = 1.0/61.0; // 1/61 em int dava 0
 
     // Pulse per revolution of wheel
     public static final double wheelPulseRatio      = pulsePerRevolution * gearRatio;
 
     // Distance per tick
-    public static final double wheelDistPerTick  = (Math.PI * 2 * wheelRadius) / wheelPulseRatio;
+    public static final double wheelDistPerTick  = (Math.PI * 2 * wheelRadius) / pulsePerRevolution; //mm
 	
 
     

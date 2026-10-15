@@ -104,7 +104,7 @@ private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
 
     //autoChooser.setDefaultOption("Auto Routine", new AutoCommand());
-    autoChooser.addOption("Auto Time", new DriveToDistance( ));
+    autoChooser.addOption("Auto Time", new DriveToDistance(0.5));
     SmartDashboard.putData(autoChooser);
 
 

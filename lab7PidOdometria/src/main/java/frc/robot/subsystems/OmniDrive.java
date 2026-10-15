@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 //Vendor imports
-import com.studica.frc.TitanQuad;
+import com.studica.frc.Titan;
 import com.kauailabs.navx.frc.AHRS;
 
 //
@@ -39,9 +39,10 @@ public class OmniDrive extends SubsystemBase
     /**
      * Declare Motors
      */
-    private TitanQuad motor1; // left motor
-    private TitanQuad motor2; // back motor
-    private TitanQuad motor3; // right motor
+    private Titan titan;
+    private Titan.Motor motor1; // left motor
+    private Titan.Motor motor2; // back motor
+    private Titan.Motor motor3; // right motor
 
     private SpeedController leftMotor;
     private SpeedController backMotor;
@@ -77,7 +78,7 @@ public class OmniDrive extends SubsystemBase
      * Declare Encoders
      */
 
-    //private TitanQuadEncoder encoderMotor1;
+    //private Titan.Encoder encoderMotor1;
     
     private final Encoder encoderMotor1; 
     private final Encoder encoderMotor2;
@@ -114,9 +115,10 @@ public class OmniDrive extends SubsystemBase
          * Motors
          */
         
-        motor1 = new TitanQuad(Constants.TITAN_ID, Constants.M1);
-        motor2 = new TitanQuad(Constants.TITAN_ID, Constants.M2);
-        motor3 = new TitanQuad(Constants.TITAN_ID, Constants.M3);
+        titan = new Titan(Constants.TITAN_ID);
+        motor1 = titan.getMotor(Constants.M1);
+        motor2 = titan.getMotor(Constants.M2);
+        motor3 = titan.getMotor(Constants.M3);
 
         
         this.leftMotor = motor1;
@@ -241,14 +243,12 @@ public class OmniDrive extends SubsystemBase
     }
 
 
-    // Get encoder distance traveled in meters
+    // Get encoder distance traveled in mm
     private double getEncoderDistance(Encoder encoder) 
     {
-        // Calculate distance traveled per encoder pulse
-        double pulseDistance = Constants.wheelDiameterMeter * Math.PI / Constants.pulsePerRevolution;
-
-        // Calculate total distance traveled
-        return encoder.getDistance() * pulseDistance * Constants.gearRatio;
+        // setDistancePerPulse(wheelDistPerTick) ja foi aplicado no construtor,
+        // entao getDistance() ja devolve milimetros - nao escalar de novo.
+        return encoder.getDistance();
     }
 
     // Get current robot X position

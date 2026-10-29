@@ -230,4 +230,46 @@ public class OdometryTest
         assertEquals(1.0, odometry.getVxMetersPerSecond(), 1e-6);
         assertEquals(0.0, odometry.getVyMetersPerSecond(), 1e-6);
     }
+
+    /**
+     * Com o robo a 90 graus, 1 m/s para a frente do robo e 1 m/s no +Y do
+     * campo. E o par do frenteDoRoboViraEixoYQuandoGirado90, mas para a
+     * velocidade em vez da posicao.
+     */
+    @Test
+    public void velocidadeDeCampoGiraComORumo()
+    {
+        Odometry odometry = new Odometry();
+        odometry.resetPose(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(90.0)), new Rotation2d());
+
+        double[] w = wheels(0.02, 0.0, 0.0); // 2 cm em 20 ms = 1 m/s
+
+        odometry.updateWithTime(1.00, new Rotation2d(), 0.0, 0.0, 0.0);
+        odometry.updateWithTime(1.02, new Rotation2d(), w[0], w[1], w[2]);
+
+        // No referencial do robo continua sendo "para frente"
+        assertEquals(1.0, odometry.getVxMetersPerSecond(), 1e-6);
+        assertEquals(0.0, odometry.getVyMetersPerSecond(), 1e-6);
+
+        // No campo, essa frente aponta para o +Y
+        assertEquals(0.0, odometry.getFieldVelocity().getX(), 1e-6);
+        assertEquals(1.0, odometry.getFieldVelocity().getY(), 1e-6);
+    }
+
+    /**
+     * Com o robo alinhado ao campo (theta = 0), as duas leituras tem que ser
+     * identicas: se divergirem aqui, o sinal da rotacao esta trocado.
+     */
+    @Test
+    public void velocidadeDeCampoIgualALocalSemGiro()
+    {
+        Odometry odometry = new Odometry();
+        double[] w = wheels(0.01, 0.01, 0.0);
+
+        odometry.updateWithTime(1.00, new Rotation2d(), 0.0, 0.0, 0.0);
+        odometry.updateWithTime(1.02, new Rotation2d(), w[0], w[1], w[2]);
+
+        assertEquals(odometry.getVxMetersPerSecond(), odometry.getFieldVelocity().getX(), 1e-9);
+        assertEquals(odometry.getVyMetersPerSecond(), odometry.getFieldVelocity().getY(), 1e-9);
+    }
 }

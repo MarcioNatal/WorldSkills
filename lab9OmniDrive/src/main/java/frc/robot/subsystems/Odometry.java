@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.geometry.Twist2d;
 
 import frc.robot.Constants.DriveConstants;
@@ -199,5 +200,23 @@ public class Odometry
     public double getOmegaRadPerSecond()
     {
         return omegaRadPerSecond;
+    }
+
+    /**
+     * Mesma velocidade dos getters acima, mas rotacionada para o referencial do
+     * campo: gira o vetor local de +theta (o inverso do que
+     * {@code driveFieldOriented} faz, que vai de campo para robo).
+     *
+     * <p>Util para comparar com o alvo de um trajeto, que normalmente e dado em
+     * coordenadas de campo, e para checar no dashboard se o robo esta de fato
+     * indo para onde se pediu.
+     *
+     * @return vetor velocidade no campo, em m/s (x para frente do campo,
+     *         y para a esquerda do campo)
+     */
+    public Translation2d getFieldVelocity()
+    {
+        return new Translation2d(vxMetersPerSecond, vyMetersPerSecond)
+                   .rotateBy(pose.getRotation());
     }
 }

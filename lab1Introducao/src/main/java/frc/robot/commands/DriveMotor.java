@@ -8,18 +8,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.DriveTrainSubsystem;
+
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
 public class DriveMotor extends SequentialCommandGroup 
 {
-  private final DriveTrain driveTrain;
+  private final DriveTrainSubsystem driveTrain;
   /**
    * Creates a new DriveMotor.
    */
-  public DriveMotor(DriveTrain driveSubSystem) 
+  public DriveMotor(DriveTrainSubsystem driveSubSystem) 
   {
     this.driveTrain = driveSubSystem;
     // Add your commands in the super() call, e.g.

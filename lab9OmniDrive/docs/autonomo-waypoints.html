@@ -1,0 +1,1204 @@
+<title>Autônomo por Coordenadas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+  /* ---------------------------------------------------------------
+     Paleta herdada do deck do Lab 9 (docs/deckbase.py).
+     Projeto dark-first: :root ja e o tema escuro; o claro entra como
+     contraponto nos dois gatilhos (preferencia do sistema e toggle).
+     --------------------------------------------------------------- */
+  :root {
+    --bg:      #0B1220;
+    --panel:   #162238;
+    --panel-2: #1E2E4A;
+    --line:    #26385A;
+    --ink:     #E6EDF8;
+    --muted:   #93A6C4;
+    --dim:     #5A6C8A;
+    --cy:      #38D9F0;
+    --am:      #FBBF24;
+    --gr:      #34D399;
+    --code-bg: #0D1727;
+    --shadow:  0 1px 0 rgba(255,255,255,.04), 0 10px 30px -18px rgba(0,0,0,.9);
+
+    --display: "Archivo", "Segoe UI", system-ui, sans-serif;
+    --body:    "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+    --mono:    "IBM Plex Mono", "Consolas", ui-monospace, monospace;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg:      #EDF1F7;
+      --panel:   #FFFFFF;
+      --panel-2: #F4F7FC;
+      --line:    #D2DCEA;
+      --ink:     #0E1726;
+      --muted:   #455874;
+      --dim:     #76879F;
+      --cy:      #0E7490;
+      --am:      #8A5A08;
+      --gr:      #047857;
+      --code-bg: #0D1727;
+      --shadow:  0 1px 0 rgba(255,255,255,.7), 0 10px 28px -20px rgba(14,23,38,.45);
+    }
+  }
+
+  :root[data-theme="light"] {
+    --bg:      #EDF1F7;
+    --panel:   #FFFFFF;
+    --panel-2: #F4F7FC;
+    --line:    #D2DCEA;
+    --ink:     #0E1726;
+    --muted:   #455874;
+    --dim:     #76879F;
+    --cy:      #0E7490;
+    --am:      #8A5A08;
+    --gr:      #047857;
+    --code-bg: #0D1727;
+    --shadow:  0 1px 0 rgba(255,255,255,.7), 0 10px 28px -20px rgba(14,23,38,.45);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 28px 110px;
+  }
+
+  /* ------------------------------------------------------- cabecalho */
+  header.top {
+    border-bottom: 1px solid var(--line);
+    padding: 56px 0 34px;
+    margin-bottom: 44px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--cy);
+    margin: 0 0 18px;
+  }
+  h1 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(34px, 5.4vw, 54px);
+    line-height: 1.04;
+    letter-spacing: -.022em;
+    margin: 0 0 20px;
+    text-wrap: balance;
+    max-width: 24ch;
+  }
+  .standfirst {
+    font-size: 19px;
+    color: var(--muted);
+    max-width: 62ch;
+    margin: 0;
+  }
+  .standfirst strong { color: var(--ink); font-weight: 600; }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 28px;
+    margin: 30px 0 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--dim);
+  }
+  .meta b {
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    font-size: 11.5px;
+    margin-right: 8px;
+  }
+
+  /* --------------------------------------------------- grade + rail */
+  .layout { display: grid; grid-template-columns: 1fr; }
+  @media (min-width: 1000px) {
+    .layout {
+      grid-template-columns: 212px minmax(0, 1fr);
+      gap: 56px;
+      align-items: start;
+    }
+    .rail { position: sticky; top: 32px; }
+  }
+
+  .rail { font-family: var(--mono); font-size: 13px; margin-bottom: 44px; }
+  .rail .rail-title {
+    font-size: 11.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--dim);
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+    margin: 0 0 4px;
+  }
+  .rail ol { list-style: none; margin: 0; padding: 0; counter-reset: r; }
+  .rail li { counter-increment: r; }
+  .rail ol a {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: 8px;
+    padding: 9px 0;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .rail ol a::before {
+    content: counter(r, decimal-leading-zero);
+    color: var(--dim);
+  }
+  .rail a:hover, .rail a:focus-visible { color: var(--cy); }
+  .rail ol a:hover::before, .rail ol a:focus-visible::before { color: var(--cy); }
+  .rail .extra {
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 10px;
+  }
+  .rail .extra a { color: var(--muted); text-decoration: none; }
+
+  /* ------------------------------------------------------- conteudo */
+  main { min-width: 0; }
+  section { margin: 0 0 64px; scroll-margin-top: 28px; }
+
+  .step-head {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 18px;
+    align-items: baseline;
+    border-top: 2px solid var(--cy);
+    padding-top: 16px;
+    margin-bottom: 14px;
+  }
+  .step-num {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cy);
+    letter-spacing: .08em;
+  }
+  h2 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(23px, 2.6vw, 30px);
+    line-height: 1.15;
+    letter-spacing: -.015em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  h2 em { font-style: italic; }
+  .file-tag {
+    grid-column: 2;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--muted);
+    margin: 6px 0 0;
+  }
+  .file-tag span { color: var(--dim); }
+
+  h3 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 18px;
+    margin: 36px 0 10px;
+  }
+
+  p, main ul, main ol { max-width: 68ch; }
+  p { margin: 0 0 16px; }
+  main ul, main ol { margin: 0 0 16px; padding-left: 22px; }
+  main li { margin-bottom: 8px; }
+  main li::marker { color: var(--dim); }
+
+  a { color: var(--cy); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible {
+    outline: 2px solid var(--cy);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  code {
+    font-family: var(--mono);
+    font-size: .86em;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    padding: .1em .36em;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  /* ---------------------------------------------------------- codigo */
+  figure.code {
+    margin: 22px 0;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--code-bg);
+    box-shadow: var(--shadow);
+  }
+  figure.code figcaption {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .04em;
+    color: #93A6C4;
+    background: #11203A;
+    border-bottom: 1px solid #26385A;
+    padding: 9px 16px;
+  }
+  figure.code figcaption em { color: #5A6C8A; font-style: normal; }
+  pre {
+    margin: 0;
+    padding: 16px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.62;
+    color: #DCE6F5;
+    tab-size: 4;
+  }
+  pre .c { color: #6B82A6; }
+  pre .k { color: #F472B6; }
+  pre .t { color: #38D9F0; }
+  pre .n { color: #FBBF24; }
+  pre .s { color: #34D399; }
+  pre .hl { background: rgba(56,217,240,.10); display: block; }
+
+  /* ---------------------------------------------------------- blocos */
+  .callout {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--am);
+    background: var(--panel);
+    padding: 18px 20px;
+    border-radius: 0 6px 6px 0;
+    margin: 24px 0;
+    max-width: 72ch;
+  }
+  .callout.ok  { border-left-color: var(--gr); }
+  .callout.net { border-left-color: var(--cy); }
+  .callout .label {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--am);
+    display: block;
+    margin-bottom: 8px;
+  }
+  .callout.ok  .label { color: var(--gr); }
+  .callout.net .label { color: var(--cy); }
+  .callout p { max-width: none; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* --------------------------------------------------------- tabelas */
+  .table-scroll { overflow-x: auto; margin: 24px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    min-width: 600px;
+  }
+  caption {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--dim);
+    padding-bottom: 12px;
+  }
+  th {
+    text-align: left;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 12.5px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+    padding: 0 18px 10px 0;
+    vertical-align: bottom;
+  }
+  td {
+    border-bottom: 1px solid var(--line);
+    padding: 13px 18px 13px 0;
+    vertical-align: top;
+    color: var(--muted);
+  }
+  td:first-child { color: var(--ink); }
+  td code {
+    white-space: nowrap;
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--cy);
+  }
+  .num {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  /* ------------------------------------------------------- diagramas */
+  figure.fig {
+    margin: 30px 0;
+    padding: 22px 22px 16px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+  }
+  figure.fig svg {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    color: var(--ink);
+  }
+  figure.fig figcaption {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    font-size: 14.5px;
+    color: var(--muted);
+    max-width: 76ch;
+  }
+  figure.fig figcaption b { color: var(--ink); font-weight: 600; }
+  figure.fig figcaption code { font-size: .85em; }
+
+  /* Acentos dos diagramas via token: o ciano claro do tema escuro nao
+     tem contraste sobre o painel branco do tema claro. */
+  figure.fig .acc-s { stroke: var(--cy); }
+  figure.fig .acc-f { fill: var(--cy); }
+  figure.fig .am-s  { stroke: var(--am); }
+  figure.fig .am-f  { fill: var(--am); }
+  #ar-cy path { fill: var(--cy); }
+
+  /* ------------------------------------------------------- checklist */
+  .check { list-style: none; padding: 0; margin: 22px 0; max-width: 72ch; }
+  .check li {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 14px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+    margin: 0;
+  }
+  .check li::before {
+    content: "";
+    width: 15px;
+    height: 15px;
+    margin-top: 6px;
+    border: 1.5px solid var(--gr);
+    border-radius: 3px;
+  }
+  .check b { font-weight: 600; }
+  .check span { color: var(--muted); display: block; font-size: 15px; }
+
+  /* ---------------------------------------------------------- rodape */
+  footer {
+    border-top: 1px solid var(--line);
+    margin-top: 72px;
+    padding-top: 24px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--dim);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    a { transition: color .14s ease; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="top">
+    <p class="eyebrow">Lab 9 · OmniDrive · Autônomo</p>
+    <h1>Autônomo por coordenadas da arena</h1>
+    <p class="standfirst">
+      Como colocar a base de 3 rodas a 120° para percorrer <strong>três pontos
+      conhecidos do campo</strong>, parando 1 s em cada um, usando a odometria
+      como realimentação — e não o cronômetro.
+    </p>
+    <ul class="meta">
+      <li><b>Base</b> 3 rodas omni a 120°</li>
+      <li><b>Hardware</b> Titan + navX</li>
+      <li><b>Framework</b> WPILib Command-Based</li>
+      <li><b>Comando</b> WaypointAutoCommand</li>
+    </ul>
+  </header>
+
+  <div class="layout">
+
+    <nav class="rail" aria-label="Passos da implementação">
+      <p class="rail-title">Implementação</p>
+      <ol>
+        <li><a href="#p1">Conferir a odometria</a></li>
+        <li><a href="#p2">Constantes de navegação</a></li>
+        <li><a href="#p3">Comando de um ponto</a></li>
+        <li><a href="#p4">Grupo dos três pontos</a></li>
+        <li><a href="#p5">Registrar no chooser</a></li>
+      </ol>
+      <div class="extra">
+        <a href="#eixos">Armadilha dos eixos</a>
+        <a href="#campo">Procedimento de campo</a>
+        <a href="#ajuste">Tabela de ajuste</a>
+        <a href="#diag">Diagnóstico</a>
+        <a href="#depois">Para ir além</a>
+      </div>
+    </nav>
+
+    <main>
+
+      <!-- ================================================== O TRAJETO -->
+      <section id="trajeto">
+        <div class="step-head">
+          <span class="step-num">00</span>
+          <h2>O trajeto que vamos programar</h2>
+        </div>
+        <p>
+          O robô sai de onde estiver, considera aquele ponto como a origem do
+          campo e visita três coordenadas em sequência, parando 1 s em cada uma.
+          A frente dele aponta para o mesmo lado o trajeto inteiro: nas curvas
+          ele <em>anda de lado</em>, que é exatamente o que as 3 rodas omni
+          permitem e uma base de tração diferencial não permite.
+        </p>
+
+        <figure class="fig">
+          <svg viewBox="178 196 548 502" role="img"
+               aria-label="Mapa do trajeto visto de cima, com mais x (frente) para o alto e mais y (esquerda) para a esquerda. Do início em (0,00; 0,00) o robô sobe até P1 em (1,00; 0,00), segue para a esquerda até P2 em (1,00; 0,80) e sobe até P3 em (1,80; 0,80). A frente do robô aponta para mais x nos quatro pontos.">
+            <defs>
+              <marker id="ar-cy" viewBox="0 0 10 10" refX="9" refY="5"
+                      markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z"></path>
+              </marker>
+              <marker id="ar-ax" viewBox="0 0 10 10" refX="9" refY="5"
+                      markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" fill-opacity=".55"></path>
+              </marker>
+            </defs>
+
+            <!-- grade de meio metro -->
+            <g stroke="currentColor" stroke-opacity=".13" stroke-dasharray="3 5">
+              <line x1="212" y1="515" x2="552" y2="515"></line>
+              <line x1="212" y1="430" x2="552" y2="430"></line>
+              <line x1="212" y1="345" x2="552" y2="345"></line>
+              <line x1="212" y1="260" x2="552" y2="260"></line>
+              <line x1="455" y1="250" x2="455" y2="612"></line>
+              <line x1="370" y1="250" x2="370" y2="612"></line>
+            </g>
+
+            <!-- eixos do campo: +x para o alto, +y para a esquerda -->
+            <line x1="540" y1="600" x2="540" y2="238" stroke="currentColor"
+                  stroke-opacity=".55" stroke-width="1.5" marker-end="url(#ar-ax)"></line>
+            <line x1="540" y1="600" x2="202" y2="600" stroke="currentColor"
+                  stroke-opacity=".55" stroke-width="1.5" marker-end="url(#ar-ax)"></line>
+            <text x="540" y="222" text-anchor="middle" font-family="IBM Plex Mono, monospace"
+                  font-size="12.5" fill="currentColor" fill-opacity=".6">+x · frente</text>
+            <text x="196" y="588" text-anchor="start" font-family="IBM Plex Mono, monospace"
+                  font-size="12.5" fill="currentColor" fill-opacity=".6">+y · esquerda</text>
+
+            <!-- trajeto -->
+            <g class="acc-s" stroke-width="2.5" fill="none" marker-end="url(#ar-cy)">
+              <line x1="540" y1="558" x2="540" y2="472"></line>
+              <line x1="500" y1="430" x2="444" y2="430"></line>
+              <line x1="404" y1="388" x2="404" y2="336"></line>
+            </g>
+            <g class="acc-f" font-family="IBM Plex Mono, monospace" font-size="12.5">
+              <text x="558" y="512">1,00 m · frente</text>
+              <text x="472" y="502" text-anchor="middle">0,80 m · de lado</text>
+              <text x="352" y="366" text-anchor="end">0,80 m · frente</text>
+            </g>
+
+            <!-- robô no início: chassi com as 3 rodas a 120° -->
+            <circle cx="540" cy="600" r="26" fill="currentColor" fill-opacity=".07"
+                    stroke="currentColor" stroke-opacity=".5" stroke-width="1.5"></circle>
+            <g stroke="currentColor" stroke-opacity=".7" stroke-width="4" stroke-linecap="round">
+              <line x1="530" y1="626" x2="550" y2="626"></line>
+              <line x1="513" y1="596" x2="523" y2="578"></line>
+              <line x1="557" y1="578" x2="567" y2="596"></line>
+            </g>
+
+            <!-- posições seguintes: mesma orientação -->
+            <g fill="none" stroke="currentColor" stroke-opacity=".3" stroke-width="1.5">
+              <circle cx="540" cy="430" r="26"></circle>
+              <circle cx="404" cy="430" r="26"></circle>
+              <circle cx="404" cy="294" r="26"></circle>
+            </g>
+
+            <!-- a frente do robô: aponta para +x nos quatro pontos -->
+            <g class="acc-s" stroke-width="2.5">
+              <line x1="540" y1="600" x2="540" y2="591"></line>
+              <line x1="540" y1="430" x2="540" y2="421"></line>
+              <line x1="404" y1="430" x2="404" y2="421"></line>
+              <line x1="404" y1="294" x2="404" y2="285"></line>
+            </g>
+            <g class="acc-f">
+              <polygon points="535,592 545,592 540,581"></polygon>
+              <polygon points="535,422 545,422 540,411"></polygon>
+              <polygon points="399,422 409,422 404,411"></polygon>
+              <polygon points="399,286 409,286 404,275"></polygon>
+            </g>
+
+            <!-- paradas de 1 s -->
+            <g class="am-s" fill="none" stroke-width="1.5" stroke-dasharray="4 4">
+              <circle cx="540" cy="430" r="44"></circle>
+              <circle cx="404" cy="430" r="44"></circle>
+              <circle cx="404" cy="294" r="44"></circle>
+            </g>
+            <g class="am-f" font-family="IBM Plex Mono, monospace" font-size="12"
+               text-anchor="end">
+              <text x="500" y="392">1 s</text>
+              <text x="364" y="392">1 s</text>
+              <text x="364" y="256">1 s</text>
+            </g>
+
+            <!-- rótulos dos pontos -->
+            <g font-family="IBM Plex Mono, monospace" font-size="12.5" fill="currentColor"
+               fill-opacity=".85">
+              <text x="540" y="658" text-anchor="middle">início (0,00 · 0,00)</text>
+              <text x="596" y="436">P1 (1,00 · 0,00)</text>
+              <text x="348" y="436" text-anchor="end">P2 (1,00 · 0,80)</text>
+              <text x="348" y="300" text-anchor="end">P3 (1,80 · 0,80)</text>
+            </g>
+
+            <!-- legenda -->
+            <g font-family="IBM Plex Mono, monospace" font-size="11.5">
+              <text x="212" y="652" fill="currentColor" fill-opacity=".5">grade · 0,5 m</text>
+              <text x="212" y="674" class="am-f">anel tracejado · pausa de 1 s</text>
+            </g>
+          </svg>
+          <figcaption>
+            Arena vista de cima, na convenção do deck do Lab 9: <b>+x (frente)
+            para o alto, +y (esquerda) para a esquerda</b>. A seta ciano dentro do
+            chassi é a frente do robô — ela aponta para +x nos quatro pontos,
+            inclusive na perna em que ele se desloca para a esquerda. As
+            coordenadas são medidas a partir do ponto onde o autônomo começou,
+            não de onde o robô foi ligado.
+          </figcaption>
+        </figure>
+
+        <h3>Por que fechar a malha na pose, e não no tempo</h3>
+        <p>
+          Um autônomo cronometrado (“ande 2 s para a frente”) erra assim que a
+          bateria cai, o tapete muda ou uma roda escorrega. Aqui o erro é
+          recalculado a cada ciclo de 20 ms a partir da pose estimada pela
+          odometria, então o robô insiste até chegar — e se alguém empurrar ele
+          no meio do caminho, ele volta.
+        </p>
+
+        <figure class="fig">
+          <svg viewBox="0 0 760 300" role="img"
+               aria-label="Malha fechada: a odometria entrega a pose, o comando calcula o erro até o alvo, driveFieldOriented gira o vetor do campo para o referencial do robô, a cinemática distribui nas três rodas e os encoders realimentam a odometria.">
+            <defs>
+              <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5"
+                      markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" fill-opacity=".6"></path>
+              </marker>
+            </defs>
+
+            <g fill="currentColor" fill-opacity=".06" stroke="currentColor"
+               stroke-opacity=".38" stroke-width="1.5">
+              <rect x="30" y="42" width="178" height="64" rx="4"></rect>
+              <rect x="288" y="42" width="186" height="64" rx="4"></rect>
+              <rect x="554" y="42" width="176" height="64" rx="4"></rect>
+              <rect x="554" y="196" width="176" height="64" rx="4"></rect>
+              <rect x="288" y="196" width="186" height="64" rx="4"></rect>
+            </g>
+
+            <g font-family="IBM Plex Sans, sans-serif" font-size="13"
+               fill="currentColor" text-anchor="middle">
+              <text x="119" y="70" font-weight="600">Odometria</text>
+              <text x="119" y="89" font-size="12" fill-opacity=".65">pose (x, y, θ)</text>
+
+              <text x="381" y="70" font-weight="600">DriveToPointCommand</text>
+              <text x="381" y="89" font-size="12" fill-opacity=".65">erro → direção × velocidade</text>
+
+              <text x="642" y="63" font-weight="600">driveFieldOriented</text>
+              <text x="642" y="81" font-size="12" fill-opacity=".65">rotação campo → robô</text>
+              <text x="642" y="97" font-size="12" fill-opacity=".65">(gira de −θ)</text>
+
+              <text x="642" y="224" font-weight="600">Cinemática 3 rodas</text>
+              <text x="642" y="242" font-size="12" fill-opacity=".65">+ PID de RPM</text>
+
+              <text x="381" y="224" font-weight="600">Motores e encoders</text>
+              <text x="381" y="242" font-size="12" fill-opacity=".65">o robô se move de verdade</text>
+            </g>
+
+            <g stroke="currentColor" stroke-opacity=".6" stroke-width="1.5" fill="none"
+               marker-end="url(#ar2)">
+              <line x1="208" y1="74" x2="280" y2="74"></line>
+              <line x1="474" y1="74" x2="546" y2="74"></line>
+              <line x1="642" y1="106" x2="642" y2="188"></line>
+              <line x1="554" y1="228" x2="482" y2="228"></line>
+              <polyline points="288,228 119,228 119,114"></polyline>
+            </g>
+
+            <g font-family="IBM Plex Mono, monospace" font-size="11.5"
+               fill="currentColor" fill-opacity=".6">
+              <text x="244" y="66" text-anchor="middle">pose</text>
+              <text x="510" y="66" text-anchor="middle">vx, vy campo</text>
+              <text x="518" y="248" text-anchor="middle">RPM alvo</text>
+              <text x="652" y="152">vx, vy robô</text>
+              <text x="131" y="178">distância das 3 rodas</text>
+            </g>
+          </svg>
+          <figcaption>
+            A matriz de rotação aparece <b>duas vezes, em sentidos opostos</b>: a
+            odometria gira o deslocamento medido nas rodas do referencial do robô
+            para o campo (dentro de <code>Pose2d.exp()</code>), e o
+            <code>driveFieldOriented</code> gira a velocidade pedida do campo de
+            volta para o robô. As duas leem o mesmo rumo, por isso nunca divergem
+            de convenção.
+          </figcaption>
+        </figure>
+      </section>
+
+      <!-- ==================================================== PASSO 1 -->
+      <section id="p1">
+        <div class="step-head">
+          <span class="step-num">01</span>
+          <h2>Conferir a odometria antes de confiar nela</h2>
+          <p class="file-tag"><span>src/main/java/frc/robot/</span>Constants.java</p>
+        </div>
+        <p>
+          Este autônomo é tão bom quanto a pose. Com a odometria fora de escala,
+          o robô para com toda a convicção no lugar errado. Antes de rodar, os
+          quatro valores abaixo precisam estar medidos no <em>seu</em> robô —
+          nenhum deles é chute seguro.
+        </p>
+
+        <div class="table-scroll">
+          <table>
+            <caption>DriveConstants · conferir no hardware</caption>
+            <thead>
+              <tr>
+                <th>Constante</th>
+                <th>Como conferir</th>
+                <th>Sintoma se errar</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>kEncoderTicksPerRevolution</code></td>
+                <td>Gire a roda exatamente uma volta à mão e leia a contagem crua do encoder.</td>
+                <td>Toda distância sai proporcionalmente errada.</td>
+              </tr>
+              <tr>
+                <td><code>kWheelDiameterMeters</code></td>
+                <td>Paquímetro na roda omni montada — o peso do robô amassa um pouco.</td>
+                <td>Erro proporcional, soma com o de cima.</td>
+              </tr>
+              <tr>
+                <td><code>kRobotRadiusMeters</code></td>
+                <td>Centro do robô até o centro de cada roda. Só entra na rotação.</td>
+                <td>Translação certa, giro estimado errado.</td>
+              </tr>
+              <tr>
+                <td><code>kGyroReversed</code></td>
+                <td>Gire o robô à mão no anti-horário: <code>Odom Theta</code> tem que subir.</td>
+                <td>O robô foge do ponto em vez de ir até ele.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout ok">
+          <span class="label">Teste de dois minutos, no chão</span>
+          <p>
+            Empurre o robô 1 m para a frente com uma trena ao lado e leia
+            <code>Odom X (m)</code>. Depois empurre 1 m para a esquerda e leia
+            <code>Odom Y (m)</code>. Se cada um marcar perto de 1,00 enquanto o
+            outro eixo fica perto de zero, a odometria está pronta para navegar.
+            Se um deles der negativo, é sinal trocado: não é hora de ajustar
+            ganho, é hora de ajustar convenção.
+          </p>
+        </div>
+      </section>
+
+      <!-- ==================================================== PASSO 2 -->
+      <section id="p2">
+        <div class="step-head">
+          <span class="step-num">02</span>
+          <h2>Declarar as constantes de navegação</h2>
+          <p class="file-tag"><span>src/main/java/frc/robot/</span>Constants.java <span>· classe</span> AutoConstants</p>
+        </div>
+        <p>
+          O comando novo não inventa número nenhum: tudo que se ajusta em campo
+          mora aqui, junto das constantes que o autônomo do quadrado já usava.
+        </p>
+
+        <figure class="code">
+          <figcaption>Constants.java <em>· dentro de AutoConstants</em></figcaption>
+<pre><span class="c">// --- Navegacao por coordenadas de campo (DriveToPointCommand) ---</span>
+<span class="c">// Saida de velocidade por metro de erro. Com 0.8 o robo sai na</span>
+<span class="c">// velocidade de cruzeiro enquanto falta mais de ~0.45 m e desacelera</span>
+<span class="c">// sozinho no fim, sem precisar da rampa manual do DriveDistanceCommand.</span>
+<span class="k">public static final</span> <span class="t">double</span> kTranslationP = <span class="n">0.8</span>;
+<span class="c">// Raio em volta do ponto em que ele e considerado alcancado (metros).</span>
+<span class="c">// Nao aperte abaixo da precisao real da odometria, senao o comando fica</span>
+<span class="c">// oscilando em volta do alvo ate o timeout.</span>
+<span class="k">public static final</span> <span class="t">double</span> kPositionTolerance = <span class="n">0.05</span>;
+<span class="c">// Parada em cada ponto do trajeto (segundos)</span>
+<span class="k">public static final</span> <span class="t">double</span> kWaypointPauseSeconds = <span class="n">1.0</span>;
+<span class="c">// Rede de seguranca por ponto: cada perna desiste depois disso (segundos)</span>
+<span class="k">public static final</span> <span class="t">double</span> kWaypointTimeoutSeconds = <span class="n">8.0</span>;</pre>
+        </figure>
+
+        <p>
+          As outras quatro vêm de graça do autônomo anterior e continuam
+          valendo: <code>kDriveSpeed</code> (velocidade de cruzeiro),
+          <code>kMinDriveSpeed</code> (piso que vence o atrito),
+          <code>kHeadingP</code> e <code>kMaxTurnOutput</code> (correção de rumo
+          durante a translação).
+        </p>
+      </section>
+
+      <!-- ==================================================== PASSO 3 -->
+      <section id="p3">
+        <div class="step-head">
+          <span class="step-num">03</span>
+          <h2>O comando que leva a <em>um</em> ponto</h2>
+          <p class="file-tag"><span>src/main/java/frc/robot/commands/</span>DriveToPointCommand.java</p>
+        </div>
+        <p>
+          É a peça reutilizável: recebe uma coordenada absoluta do campo e
+          translada até lá sem girar o chassi. O coração é o
+          <code>execute()</code> — três contas e uma chamada.
+        </p>
+
+        <figure class="code">
+          <figcaption>DriveToPointCommand.java <em>· execute()</em></figcaption>
+<pre><span class="k">@Override</span>
+<span class="k">public void</span> execute()
+{
+<span class="hl">    <span class="t">Translation2d</span> error = target.minus(drive.getPose().getTranslation());
+    <span class="t">double</span> distance = error.getNorm();</span>
+
+    <span class="k">if</span> (distance &lt; <span class="n">1e-6</span>)
+    {
+        drive.driveFieldOriented(<span class="n">0.0</span>, <span class="n">0.0</span>, <span class="n">0.0</span>);
+        <span class="k">return</span>;
+    }
+
+    <span class="c">// Velocidade proporcional ao que falta, limitada entre o piso que vence</span>
+    <span class="c">// o atrito e a velocidade de cruzeiro</span>
+    <span class="t">double</span> speed = <span class="t">Math</span>.min(distance * <span class="t">AutoConstants</span>.kTranslationP, <span class="t">AutoConstants</span>.kDriveSpeed);
+    speed = <span class="t">Math</span>.max(speed, <span class="t">AutoConstants</span>.kMinDriveSpeed);
+
+    <span class="c">// Direcao unitaria do erro, ja em coordenadas de campo</span>
+    <span class="t">double</span> dirX = error.getX() / distance;
+    <span class="t">double</span> dirY = error.getY() / distance;
+
+    <span class="c">// Correcao de rumo: o robo translada, nao gira</span>
+    <span class="t">double</span> headingError = targetHeading.minus(drive.getPose().getRotation()).getDegrees();
+    <span class="t">double</span> turn = headingError * <span class="t">AutoConstants</span>.kHeadingP;
+    turn = <span class="t">Math</span>.max(-<span class="t">AutoConstants</span>.kMaxTurnOutput,
+           <span class="t">Math</span>.min(<span class="t">AutoConstants</span>.kMaxTurnOutput, turn));
+
+    drive.driveFieldOriented(dirX * speed, dirY * speed, turn);
+}</pre>
+        </figure>
+
+        <h3>As três decisões de projeto</h3>
+        <ul>
+          <li>
+            <b>O erro é recalculado todo ciclo</b> a partir da pose. É isso que
+            separa este comando do <code>DriveDistanceCommand</code>, que mede
+            deslocamento relativo desde o <code>initialize()</code>: com erro
+            absoluto, escorregão não acumula.
+          </li>
+          <li>
+            <b>A velocidade é proporcional ao que falta</b>, então a
+            desaceleração no fim sai de graça — não existe rampa manual nem
+            <code>kRampDownDistance</code> aqui.
+          </li>
+          <li>
+            <b>Nada de <code>resetEncoders()</code> no
+            <code>initialize()</code>.</b> O alvo é absoluto: a pose precisa
+            continuar valendo de um ponto para o próximo, e zerar encoder no meio
+            do trajeto é a forma mais fácil de perder a referência.
+          </li>
+        </ul>
+
+        <p>
+          O <code>isFinished()</code> devolve <code>true</code> quando a
+          distância que falta cai abaixo de <code>kPositionTolerance</code>, e o
+          <code>end()</code> chama <code>drive.stop()</code> — que também zera o
+          PID e as rampas, para a próxima perna não começar herdando a
+          velocidade da anterior.
+        </p>
+      </section>
+
+      <!-- ==================================================== PASSO 4 -->
+      <section id="p4">
+        <div class="step-head">
+          <span class="step-num">04</span>
+          <h2>O grupo que encadeia os três pontos</h2>
+          <p class="file-tag"><span>src/main/java/frc/robot/commands/</span>WaypointAutoCommand.java</p>
+        </div>
+        <p>
+          Um <code>SequentialCommandGroup</code>: ancora a odometria, depois
+          alterna perna e pausa. Os três pontos ficam num array no topo da
+          classe — é o único lugar que você edita para mudar o trajeto.
+        </p>
+
+        <figure class="code">
+          <figcaption>WaypointAutoCommand.java</figcaption>
+<pre><span class="k">private static final</span> <span class="t">Translation2d</span>[] WAYPOINTS =
+{
+    <span class="k">new</span> <span class="t">Translation2d</span>(<span class="n">1.00</span>, <span class="n">0.00</span>),  <span class="c">// P1: 1 m para a frente</span>
+    <span class="k">new</span> <span class="t">Translation2d</span>(<span class="n">1.00</span>, <span class="n">0.80</span>),  <span class="c">// P2: 80 cm para a esquerda</span>
+    <span class="k">new</span> <span class="t">Translation2d</span>(<span class="n">1.80</span>, <span class="n">0.80</span>)   <span class="c">// P3: mais 80 cm para a frente</span>
+};
+
+<span class="k">public</span> WaypointAutoCommand(<span class="t">OmnidriveSubsystem</span> drive)
+{
+<span class="hl">    <span class="c">// A posicao atual passa a ser a origem do campo, o rumo atual passa a ser 0 grau</span>
+    addCommands(<span class="k">new</span> <span class="t">InstantCommand</span>(drive::resetOdometry));</span>
+
+    <span class="k">for</span> (<span class="t">int</span> i = <span class="n">0</span>; i &lt; WAYPOINTS.length; i++)
+    {
+        addCommands(leg(drive, WAYPOINTS[i]));
+        addCommands(pause(drive));
+    }
+
+    addCommands(<span class="k">new</span> <span class="t">InstantCommand</span>(drive::stop, drive));
+}
+
+<span class="k">private static</span> <span class="t">Command</span> leg(<span class="t">OmnidriveSubsystem</span> drive, <span class="t">Translation2d</span> point)
+{
+    <span class="k">return new</span> <span class="t">DriveToPointCommand</span>(drive, point.getX(), point.getY())
+            .withTimeout(<span class="t">AutoConstants</span>.kWaypointTimeoutSeconds);
+}
+
+<span class="k">private static</span> <span class="t">Command</span> pause(<span class="t">OmnidriveSubsystem</span> drive)
+{
+    <span class="k">return new</span> <span class="t">RunCommand</span>(drive::stop, drive)
+            .withTimeout(<span class="t">AutoConstants</span>.kWaypointPauseSeconds);
+}</pre>
+        </figure>
+
+        <div class="callout">
+          <span class="label">A pausa precisa ser dona do subsystem</span>
+          <p>
+            Um <code>WaitCommand</code> puro <em>não</em> declara
+            <code>addRequirements(drive)</code>. Enquanto ele conta 1 s, o drive
+            fica livre, e o scheduler devolve o controle ao default command do
+            subsystem — que neste projeto é o joystick. Resultado: o robô
+            “acorda” sozinho durante a pausa se o manche estiver fora do centro.
+            Por isso a pausa aqui é um <code>RunCommand(drive::stop, drive)</code>
+            com timeout: ela segura a tração parada e mantém o default command
+            fora do caminho.
+          </p>
+        </div>
+
+        <h3>Por que <code>resetOdometry()</code> e não <code>resetHeading()</code></h3>
+        <p>
+          Os dois zeram a pose, mas <code>resetHeading()</code> também chama
+          <code>ahrs.reset()</code>, e no navX esse reset não é instantâneo. O
+          rumo zerado com atraso entra na pose como um salto de ângulo poucos
+          ciclos depois — no meio da primeira perna.
+          <code>resetOdometry()</code> mexe só na pose e deixa a IMU em paz: o
+          offset interno da classe <code>Odometry</code> cuida da diferença.
+        </p>
+      </section>
+
+      <!-- ==================================================== PASSO 5 -->
+      <section id="p5">
+        <div class="step-head">
+          <span class="step-num">05</span>
+          <h2>Pendurar no seletor de autônomo</h2>
+          <p class="file-tag"><span>src/main/java/frc/robot/</span>RobotContainer.java</p>
+        </div>
+        <p>
+          Uma linha no <code>configureButtonBindings()</code>, junto das outras
+          opções. O <code>SendableChooser</code> já está publicado no dashboard
+          com a chave <code>Autonomous</code>.
+        </p>
+
+        <figure class="code">
+          <figcaption>RobotContainer.java <em>· configureButtonBindings()</em></figcaption>
+<pre>autoChooser.addOption(<span class="s">"Auto 1"</span>, <span class="k">new</span> <span class="t">DriveDistanceCommand</span>(driveSubsystem, <span class="n">1</span>, -<span class="n">1</span>, <span class="n">0.2</span>));
+autoChooser.addOption(<span class="s">"Auto 2"</span>, <span class="k">new</span> <span class="t">SquareAutoCommand</span>(driveSubsystem));
+<span class="hl">autoChooser.addOption(<span class="s">"Auto 3 - 3 coordenadas"</span>, <span class="k">new</span> <span class="t">WaypointAutoCommand</span>(driveSubsystem));</span></pre>
+        </figure>
+
+        <p>
+          Não esqueça do import
+          <code>frc.robot.commands.WaypointAutoCommand</code>. O
+          <code>getAutonomousCommand()</code> já devolve o que estiver
+          selecionado, então nada mais precisa mudar.
+        </p>
+      </section>
+
+      <!-- ====================================================== EIXOS -->
+      <section id="eixos">
+        <div class="step-head">
+          <span class="step-num">!</span>
+          <h2>A armadilha: qual eixo é a frente</h2>
+        </div>
+        <p>
+          A cinemática em <code>driveRobotOriented</code> e a odometria usam a
+          convenção da WPILib: <strong>x é a frente, y é a esquerda</strong>. O
+          javadoc do <code>DriveDistanceCommand</code> descreve o contrário
+          (“dirX +1 = direita, dirY +1 = frente”), e o
+          <code>SquareAutoCommand</code> foi escrito seguindo esse javadoc.
+        </p>
+        <p>
+          Na prática o quadrado continua fechando — ele só é percorrido girado
+          90° em relação ao que os comentários dizem. Mas se você copiar aquele
+          padrão de direção para um trajeto por coordenadas, o robô vai para o
+          lado errado. O <code>DriveToPointCommand</code> usa a convenção real,
+          a mesma da pose:
+        </p>
+        <div class="table-scroll">
+          <table>
+            <caption>Convenção de eixos do campo</caption>
+            <thead>
+              <tr><th>Direção física</th><th>Vetor de campo</th><th>No dashboard</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Frente</td><td class="num">+x</td><td><code>Odom X (m)</code> sobe</td></tr>
+              <tr><td>Esquerda</td><td class="num">+y</td><td><code>Odom Y (m)</code> sobe</td></tr>
+              <tr><td>Giro anti-horário</td><td class="num">+θ</td><td><code>Odom Theta (deg)</code> sobe</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ====================================================== CAMPO -->
+      <section id="campo">
+        <div class="step-head">
+          <span class="step-num">▸</span>
+          <h2>Procedimento de campo</h2>
+        </div>
+        <p>
+          Na primeira vez, não rode o trajeto inteiro de cara. Velocidade é a
+          última coisa a subir, depois que a direção já está certa.
+        </p>
+        <ol class="check">
+          <li>
+            <div>
+              <b>Robô no gabarito, rodas livres</b>
+              <span>O ponto de partida é a origem: marque com fita no tapete, porque todas as coordenadas saem dele.</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <b>Dashboard aberto com Odom X, Y e Theta</b>
+              <span>Sem esses três números na tela, qualquer diagnóstico vira adivinhação.</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <b>Primeira passada com <code>kDriveSpeed</code> em 0,20</b>
+              <span>Devagar o suficiente para você acompanhar andando ao lado e abortar.</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <b>Teste só o P1: comente P2 e P3 no array</b>
+              <span>Uma perna reta valida escala, sinal e rumo — os erros aparecem todos aqui.</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <b>Trena no chão ao fim da perna</b>
+              <span>Compare o que a trena diz com o que <code>Odom X</code> diz. Diferença acima de 5 cm é escala, não ganho.</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <b>Só então volte os três pontos e suba a velocidade</b>
+              <span>Em passos de 0,05, até o robô começar a passar do ponto; depois volte um passo.</span>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <!-- ===================================================== AJUSTE -->
+      <section id="ajuste">
+        <div class="step-head">
+          <span class="step-num">▸</span>
+          <h2>O que mexer, e em que ordem</h2>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <caption>AutoConstants · valores iniciais</caption>
+            <thead>
+              <tr>
+                <th>Constante</th>
+                <th>Início</th>
+                <th>O que faz</th>
+                <th>Quando mexer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>kTranslationP</code></td>
+                <td class="num">0,8</td>
+                <td>Saída de velocidade por metro de erro. Define onde começa a frear.</td>
+                <td>Freia tarde e passa do ponto: suba. Freia longe e arrasta: desça.</td>
+              </tr>
+              <tr>
+                <td><code>kPositionTolerance</code></td>
+                <td class="num">0,05 m</td>
+                <td>Raio em que o ponto conta como alcançado.</td>
+                <td>Oscila em volta do alvo: solte para 0,08–0,10.</td>
+              </tr>
+              <tr>
+                <td><code>kDriveSpeed</code></td>
+                <td class="num">0,35</td>
+                <td>Teto de velocidade no trajeto.</td>
+                <td>Por último, depois que a direção está certa.</td>
+              </tr>
+              <tr>
+                <td><code>kMinDriveSpeed</code></td>
+                <td class="num">0,12</td>
+                <td>Piso que vence o atrito estático.</td>
+                <td>Para antes do ponto e “morre”: suba. Chega empurrando: desça.</td>
+              </tr>
+              <tr>
+                <td><code>kHeadingP</code></td>
+                <td class="num">0,010</td>
+                <td>Correção de rumo durante a translação, por grau de erro.</td>
+                <td>Se o robô gira em vez de corrigir, o sinal está invertido: use −0,010.</td>
+              </tr>
+              <tr>
+                <td><code>kWaypointTimeoutSeconds</code></td>
+                <td class="num">8,0 s</td>
+                <td>Rede de segurança por perna.</td>
+                <td>Trajeto longo ou velocidade baixa pedem mais tempo.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout net">
+          <span class="label">Ordem de ajuste</span>
+          <p>
+            Escala da odometria → sinal dos eixos → <code>kHeadingP</code> →
+            <code>kMinDriveSpeed</code> → <code>kTranslationP</code> →
+            <code>kDriveSpeed</code>. Mexer em ganho antes de fechar escala e
+            sinal é perder a tarde: o controlador vai estar perseguindo um alvo
+            que a odometria está informando errado.
+          </p>
+        </div>
+      </section>
+
+      <!-- ======================================================= DIAG -->
+      <section id="diag">
+        <div class="step-head">
+          <span class="step-num">▸</span>
+          <h2>Diagnóstico</h2>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <caption>Sintoma · causa provável · o que fazer</caption>
+            <thead>
+              <tr><th>Sintoma</th><th>Causa provável</th><th>O que fazer</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Acelera para longe do ponto e bate no timeout</td>
+                <td>Sinal invertido entre pose e comando — normalmente <code>kGyroReversed</code>.</td>
+                <td>Empurre o robô à mão e confirme que <code>Odom X/Y</code> crescem no sentido certo.</td>
+              </tr>
+              <tr>
+                <td>Chega perto e fica indo e voltando até o timeout</td>
+                <td>Tolerância menor que a precisão real da odometria.</td>
+                <td>Solte <code>kPositionTolerance</code> para 0,08–0,10 antes de mexer no ganho.</td>
+              </tr>
+              <tr>
+                <td>Para sempre antes do ponto, no mesmo lugar</td>
+                <td><code>kMinDriveSpeed</code> abaixo do atrito estático da arena.</td>
+                <td>Suba o piso em passos de 0,02 até ele vencer o tapete.</td>
+              </tr>
+              <tr>
+                <td>Passa do ponto e volta em todas as pernas</td>
+                <td>Velocidade alta para o <code>kTranslationP</code> atual.</td>
+                <td>Suba <code>kTranslationP</code> ou desça <code>kDriveSpeed</code>.</td>
+              </tr>
+              <tr>
+                <td>Os dois primeiros pontos acertam, o terceiro erra</td>
+                <td>Erro de rumo acumulando: o robô “abre” e os eixos do campo saem de prumo.</td>
+                <td>Olhe <code>Odom Theta</code> no fim do trajeto. Mais de 5° pede <code>kHeadingP</code> maior.</td>
+              </tr>
+              <tr>
+                <td>O robô se mexe durante a pausa de 1 s</td>
+                <td>Pausa sem <code>addRequirements</code>: o default command do joystick reassumiu.</td>
+                <td>Use <code>RunCommand(drive::stop, drive)</code> com timeout, não <code>WaitCommand</code>.</td>
+              </tr>
+              <tr>
+                <td>A pose dá um salto no meio do trajeto</td>
+                <td><code>resetEncoders()</code> ou <code>resetHeading()</code> chamado com o trajeto em curso.</td>
+                <td>Nenhum dos dois pode aparecer dentro das pernas — só antes de começar.</td>
+              </tr>
+              <tr>
+                <td>Anda em diagonal quando devia ir reto</td>
+                <td>Uma roda com escala diferente das outras, ou motor invertido.</td>
+                <td>Rode cada roda sozinha e compare <code>getEncoderDistances()</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===================================================== DEPOIS -->
+      <section id="depois">
+        <div class="step-head">
+          <span class="step-num">▸</span>
+          <h2>Para ir além</h2>
+        </div>
+        <ul>
+          <li>
+            <b>Girar entre os pontos.</b> Troque <code>Translation2d</code> por
+            <code>Pose2d</code> no array e use o rumo da pose alvo como
+            referência da correção, em vez do rumo capturado no
+            <code>initialize()</code>.
+          </li>
+          <li>
+            <b>Não parar nos pontos intermediários.</b> Tire a pausa das pernas
+            do meio e solte a tolerância dos pontos de passagem: o robô corta a
+            curva em vez de frear nela.
+          </li>
+          <li>
+            <b>Velocidade em coordenadas de campo.</b>
+            <code>Odometry.getFieldVelocity()</code> devolve a velocidade já
+            girada para o campo — serve para comparar com a direção pedida e
+            provar no dashboard que o robô está indo para onde se mandou.
+          </li>
+          <li>
+            <b>Corrigir a pose por visão.</b> <code>resetPose()</code> aceita uma
+            pose externa sem mexer na IMU: é por aí que entra uma câmera ou uma
+            marcação do tapete, no meio do autônomo.
+          </li>
+        </ul>
+      </section>
+
+      <footer>
+        Lab 9 · OmniDrive — Command-Based, cinemática holonômica e odometria ·
+        WorldSkills Robótica Móvel
+      </footer>
+
+    </main>
+  </div>
+</div>

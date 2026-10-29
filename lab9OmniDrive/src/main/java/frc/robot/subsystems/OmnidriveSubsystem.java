@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 
@@ -103,8 +104,15 @@ public class OmnidriveSubsystem extends SubsystemBase
         SmartDashboard.putNumber("Odom X (m)", pose.getTranslation().getX());
         SmartDashboard.putNumber("Odom Y (m)", pose.getTranslation().getY());
         SmartDashboard.putNumber("Odom Theta (deg)", pose.getRotation().getDegrees());
-        SmartDashboard.putNumber("Odom Vx (m/s)", odometry.getVxMetersPerSecond());
-        SmartDashboard.putNumber("Odom Vy (m/s)", odometry.getVyMetersPerSecond());
+        // Velocidade no referencial do robo (frente / esquerda do robo)
+        SmartDashboard.putNumber("Odom Vx robo (m/s)", odometry.getVxMetersPerSecond());
+        SmartDashboard.putNumber("Odom Vy robo (m/s)", odometry.getVyMetersPerSecond());
+
+        // Mesma velocidade girada para o campo: e com essa que se compara o
+        // alvo de um trajeto, que vem em coordenadas de arena.
+        Translation2d fieldVelocity = odometry.getFieldVelocity();
+        SmartDashboard.putNumber("Odom Vx campo (m/s)", fieldVelocity.getX());
+        SmartDashboard.putNumber("Odom Vy campo (m/s)", fieldVelocity.getY());
     }
 
     /**
@@ -255,9 +263,9 @@ public class OmnidriveSubsystem extends SubsystemBase
         double output2 = pid2.calculate(currentRPM2, targetRPM2);
         double output3 = pid3.calculate(currentRPM3, targetRPM3);
 
-        motor1.set(output1);
-        motor2.set(output2);
-        motor3.set(output3);
+        motor1.setVoltage(output1);
+        motor2.setVoltage(output2);
+        motor3.setVoltage(output3);
         
     
     }
@@ -287,9 +295,9 @@ public class OmnidriveSubsystem extends SubsystemBase
      */
     public void stop() 
     {
-        motor1.set(0);
-        motor2.set(0);
-        motor3.set(0);
+        motor1.setVoltage(0);
+        motor2.setVoltage(0);
+        motor3.setVoltage(0);
         pid1.reset();
         pid2.reset();
         pid3.reset();

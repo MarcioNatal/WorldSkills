@@ -53,8 +53,8 @@ public final class Constants
         public static final double kMaxRPM = 150.0;
 
         // Ganhos do PID de Velocidade das rodas
-        public static final double kP = 0.005;
-        public static final double kI = 0.001;
+        public static final double kP = 0.01;
+        public static final double kI = 0.000;
         public static final double kD = 0.000;
 
         // Limites do SlewRateLimiter (Variação máxima de potência por segundo)
@@ -88,6 +88,20 @@ public final class Constants
         public static final double kLegTimeoutSeconds = 6.0;
         // Pausa entre os lados, para o robo assentar antes de trocar de direcao
         public static final double kPauseSeconds = 0.25;
+
+        // --- Navegacao por coordenadas de campo (DriveToPointCommand) ---
+        // Saida de velocidade por metro de erro. Com 0.8 o robo sai na
+        // velocidade de cruzeiro enquanto falta mais de ~0.45 m e desacelera
+        // sozinho no fim, sem precisar da rampa manual do DriveDistanceCommand.
+        public static final double kTranslationP = 0.8;
+        // Raio em volta do ponto em que ele e considerado alcancado (metros).
+        // Nao aperte abaixo da precisao real da odometria, senao o comando fica
+        // oscilando em volta do alvo ate o timeout.
+        public static final double kPositionTolerance = 0.05;
+        // Parada em cada ponto do trajeto (segundos)
+        public static final double kWaypointPauseSeconds = 1.0;
+        // Rede de seguranca por ponto: cada perna desiste depois disso (segundos)
+        public static final double kWaypointTimeoutSeconds = 8.0;
     }
 
     public static final class OIConstants 

@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.DriveDistanceCommand;
 import frc.robot.commands.SquareAutoCommand;
+import frc.robot.commands.WaypointAutoCommand;
 import frc.robot.subsystems.OmnidriveSubsystem;
 
 
@@ -102,6 +103,7 @@ public class RobotContainer
 
     autoChooser.addOption("Auto 1", new DriveDistanceCommand(driveSubsystem, 1, -1, 0.2));
     autoChooser.addOption("Auto 2", new SquareAutoCommand(driveSubsystem));
+    autoChooser.addOption("Auto 3 - 3 coordenadas", new WaypointAutoCommand(driveSubsystem));
   }
 
 

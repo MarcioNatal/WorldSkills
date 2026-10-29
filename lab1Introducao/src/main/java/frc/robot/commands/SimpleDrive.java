@@ -12,11 +12,11 @@ package frc.robot.commands;
 // WPI imports
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-//RobotContainer import
-import frc.robot.RobotContainer;
+
 
 ////Subsystem imports
-import frc.robot.subsystems.DriveTrain;
+
+import frc.robot.subsystems.DriveTrainSubsystem;
 
 
 /**
@@ -28,7 +28,7 @@ import frc.robot.subsystems.DriveTrain;
 public class SimpleDrive extends CommandBase 
 {
   //Grab the subsystem instance from RobotContainer
-  private final DriveTrain drive ;
+  private final DriveTrainSubsystem driveSubsystem ;
 
  
 
@@ -39,11 +39,11 @@ public class SimpleDrive extends CommandBase
   /**
    * Creates a new SimpleDrive.
    */
-  public SimpleDrive( DriveTrain driveSubsystem) 
+  public SimpleDrive( DriveTrainSubsystem driveSubsystem) 
   {
-    this.drive = driveSubsystem;
+    this.driveSubsystem = driveSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(drive); // Adds the subsystem to the command
+    addRequirements(driveSubsystem); // Adds the subsystem to the command
   }
 
   // Called when the command is initially scheduled.
@@ -64,7 +64,7 @@ public class SimpleDrive extends CommandBase
   @Override
   public void execute() 
   {
-    drive.setMotorSpeed(0.5); // Set motor speed to 50%
+    driveSubsystem.setMotorSpeed(0.5); // Set motor speed to 50%
   }
 
   
@@ -74,7 +74,7 @@ public class SimpleDrive extends CommandBase
   @Override
   public void end(boolean interrupted) 
   {
-    drive.setMotorSpeed(0.0); // Stop motor
+    driveSubsystem.stopMotorDrive(); // Stop moto
 
   }
 

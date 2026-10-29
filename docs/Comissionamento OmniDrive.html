@@ -1,0 +1,1028 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<title>Comissionamento OmniDrive</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+  :root {
+    --ground: #edf0f0;
+    --panel: #fafbfb;
+    --panel-2: #e4e9ea;
+    --ink: #141b1e;
+    --ink-soft: #4d5e63;
+    --ink-faint: #74868b;
+    --rule: #cfd8d9;
+    --rule-soft: #dee5e6;
+    --accent: #16606e;
+    --accent-soft: #d9e8ea;
+    --signal: #a85d0b;
+    --signal-soft: #f4e6d2;
+    --pass: #27754f;
+    --fail: #a33526;
+
+    --step: clamp(0.9rem, 0.6rem + 0.9vw, 1.15rem);
+    --shadow: 0 1px 2px rgba(20, 27, 30, .06), 0 8px 24px -16px rgba(20, 27, 30, .25);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0c1214;
+      --panel: #131c1f;
+      --panel-2: #1b2529;
+      --ink: #e2e9ea;
+      --ink-soft: #a0b1b5;
+      --ink-faint: #7b8d91;
+      --rule: #273437;
+      --rule-soft: #1e2a2d;
+      --accent: #58b5c2;
+      --accent-soft: #15333a;
+      --signal: #dc9c4a;
+      --signal-soft: #33260f;
+      --pass: #4fae7e;
+      --fail: #d96b57;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -16px rgba(0, 0, 0, .8);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0c1214;
+    --panel: #131c1f;
+    --panel-2: #1b2529;
+    --ink: #e2e9ea;
+    --ink-soft: #a0b1b5;
+    --ink-faint: #7b8d91;
+    --rule: #273437;
+    --rule-soft: #1e2a2d;
+    --accent: #58b5c2;
+    --accent-soft: #15333a;
+    --signal: #dc9c4a;
+    --signal-soft: #33260f;
+    --pass: #4fae7e;
+    --fail: #d96b57;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -16px rgba(0, 0, 0, .8);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size: var(--step);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 68rem;
+    margin: 0 auto;
+    padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 4vw, 2.5rem) 6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.75rem;
+  }
+
+  h1, h2, h3, .eyebrow, .phase-no {
+    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", ui-sans-serif, sans-serif;
+    text-wrap: balance;
+  }
+
+  code, .mono, input, .val {
+    font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .eyebrow {
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* ---- cabecalho ---- */
+
+  header { display: flex; flex-direction: column; gap: .75rem; }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2rem, 1.2rem + 3.4vw, 3.1rem);
+    font-weight: 700;
+    letter-spacing: -.015em;
+    line-height: 1.02;
+  }
+
+  .lede {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--ink-soft);
+  }
+
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  .rig {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem 1.25rem;
+    padding-top: .25rem;
+    font-size: .8rem;
+    color: var(--ink-faint);
+  }
+
+  .rig span { white-space: nowrap; }
+  .rig code { color: var(--ink-soft); font-size: .78rem; }
+
+  /* ---- painel de estado ---- */
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    box-shadow: var(--shadow);
+    padding: clamp(1rem, 2.5vw, 1.5rem);
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @media (min-width: 52rem) {
+    .panel { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 2rem; }
+  }
+
+  .meter-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: .5rem;
+  }
+
+  .meter-count {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: -.02em;
+  }
+
+  .meter-count b { font-weight: 600; }
+  .meter-count span { color: var(--ink-faint); font-size: 1rem; }
+
+  .bar {
+    height: 6px;
+    background: var(--panel-2);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .bar > i {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--accent);
+    transition: width .3s ease;
+  }
+
+  .gate-note {
+    margin: .7rem 0 0;
+    font-size: .82rem;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--signal); flex: none; }
+  .gate-note.clear .dot { background: var(--pass); }
+
+  .consts { display: flex; flex-direction: column; gap: .4rem; }
+
+  .const-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: .75rem;
+    padding: .4rem .55rem;
+    border-radius: 2px;
+    background: var(--rule-soft);
+    font-size: .8rem;
+  }
+
+  .const-row code { font-size: .78rem; color: var(--ink); }
+  .const-row .now { color: var(--ink-faint); white-space: nowrap; }
+  .const-row .now b { color: var(--ink-soft); font-weight: 500; }
+
+  /* ---- fases ---- */
+
+  .phase { display: flex; flex-direction: column; gap: 0; scroll-margin-top: 1rem; }
+
+  .phase-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: .6rem;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: .25rem;
+  }
+
+  .phase-title { display: flex; align-items: baseline; gap: .7rem; min-width: 0; }
+
+  .phase-no {
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    flex: none;
+  }
+
+  .phase-head h2 {
+    margin: 0;
+    font-size: clamp(1.15rem, .9rem + .7vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: -.01em;
+  }
+
+  .phase-sub {
+    margin: .35rem 0 1rem;
+    font-size: .85rem;
+    color: var(--ink-soft);
+    max-width: 68ch;
+  }
+
+  .phase-count {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: .82rem;
+    color: var(--ink-faint);
+    flex: none;
+    padding-bottom: .15rem;
+  }
+
+  .phase-count.done { color: var(--pass); }
+
+  /* ---- itens ---- */
+
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: .85rem;
+    padding: .85rem .85rem .85rem .7rem;
+    border-bottom: 1px solid var(--rule-soft);
+    border-left: 3px solid transparent;
+    transition: background .15s ease;
+  }
+
+  .item:hover { background: var(--panel); }
+  .item.gate { border-left-color: var(--signal); }
+  .item.gate.checked { border-left-color: var(--pass); }
+  .item.checked .item-text { color: var(--ink-faint); }
+  .item.checked .ref { opacity: .6; }
+
+  .item-body { display: flex; flex-direction: column; min-width: 0; }
+
+  .box {
+    appearance: none;
+    margin: .15rem 0 0;
+    width: 1.3rem;
+    height: 1.3rem;
+    border: 1.5px solid var(--ink-faint);
+    border-radius: 2px;
+    background: var(--panel);
+    cursor: pointer;
+    flex: none;
+    position: relative;
+  }
+
+  .box:checked { background: var(--accent); border-color: var(--accent); }
+
+  .box:checked::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--panel);
+    -webkit-mask: no-repeat center / 68% url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+    mask: no-repeat center / 68% url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  }
+
+  .box:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .item-text { margin: 0; }
+  .item-text .tag {
+    display: inline-block;
+    font-family: "IBM Plex Sans Condensed", sans-serif;
+    font-size: .64rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    vertical-align: .12em;
+    padding: .1rem .35rem;
+    margin-right: .45rem;
+    border-radius: 2px;
+    background: var(--signal-soft);
+    color: var(--signal);
+  }
+
+  .item-text code { font-size: .82em; color: var(--accent); }
+
+  .expect {
+    margin: .25rem 0 0;
+    font-size: .82rem;
+    color: var(--ink-soft);
+  }
+
+  .expect b { font-weight: 600; color: var(--ink); }
+
+  .ref {
+    margin: .25rem 0 0;
+    font-size: .76rem;
+    color: var(--ink-faint);
+  }
+
+  .record {
+    margin-top: .55rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .4rem .6rem;
+  }
+
+  .record label {
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-family: "IBM Plex Sans Condensed", sans-serif;
+  }
+
+  .record input {
+    width: 8.5rem;
+    padding: .3rem .5rem;
+    font-size: .85rem;
+    color: var(--ink);
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+  }
+
+  .record input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+  .record .unit { font-size: .8rem; color: var(--ink-faint); }
+
+  /* ---- assinatura e resumo ---- */
+
+  .signoff { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+
+  .field { display: flex; flex-direction: column; gap: .3rem; }
+
+  .field label {
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-family: "IBM Plex Sans Condensed", sans-serif;
+  }
+
+  .field input {
+    padding: .45rem .6rem;
+    font-size: .9rem;
+    color: var(--ink);
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+  }
+
+  .field input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+
+  .actions { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+
+  button {
+    font-family: "IBM Plex Sans Condensed", sans-serif;
+    font-size: .82rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: .5rem .9rem;
+    color: var(--ink);
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  button:hover { border-color: var(--ink-faint); }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--panel); }
+  button.danger:hover { border-color: var(--fail); color: var(--fail); }
+
+  .sync {
+    font-size: .76rem;
+    color: var(--ink-faint);
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+  }
+
+  pre.summary {
+    margin: 0;
+    padding: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .76rem;
+    line-height: 1.5;
+    overflow-x: auto;
+    white-space: pre;
+    color: var(--ink-soft);
+  }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 1rem;
+    font-size: .78rem;
+    color: var(--ink-faint);
+    max-width: 70ch;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+
+  @media print {
+    body { background: #fff; color: #000; }
+    .panel, .item, pre.summary { box-shadow: none; }
+    .actions, .sync { display: none; }
+    .phase { break-inside: avoid; }
+    .item { break-inside: avoid; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Lab 9 &middot; base omnidirecional de 3 rodas</p>
+    <h1>Comissionamento OmniDrive</h1>
+    <p class="lede">
+      Roteiro de bancada para colocar o robô em operação e validar a odometria contra a trena.
+      A ordem importa: cada fase assume que a anterior fechou. Itens marcados
+      <span class="tag">trava</span> bloqueiam o resto do roteiro &mdash; não siga com uma trava aberta.
+    </p>
+    <div class="rig">
+      <span>Controlador <code>TitanQuad</code> CAN 42</span>
+      <span>IMU <code>navX</code> MXP</span>
+      <span>3 motores <code>Maverick</code></span>
+      <span>WPILib <code>2020.3.2</code></span>
+    </div>
+  </header>
+
+  <section class="panel" aria-label="Estado do comissionamento">
+    <div>
+      <div class="meter-head">
+        <p class="eyebrow" style="margin:0">Progresso</p>
+        <p class="meter-count" style="margin:0"><b id="done">0</b><span> / <span id="total">0</span></span></p>
+      </div>
+      <div class="bar"><i id="barfill"></i></div>
+      <p class="gate-note" id="gatenote"><span class="dot"></span><span id="gatetext">&mdash;</span></p>
+    </div>
+
+    <div>
+      <p class="eyebrow" style="margin:0 0 .5rem">Constantes a determinar nesta sessão</p>
+      <div class="consts">
+        <div class="const-row">
+          <code>kEncoderTicksPerRevolution</code>
+          <span class="now">no código <b>1464,0</b></span>
+        </div>
+        <div class="const-row">
+          <code>kWheelDiameterMeters</code>
+          <span class="now">no código <b>0,100</b></span>
+        </div>
+        <div class="const-row">
+          <code>kRobotRadiusMeters</code>
+          <span class="now">no código <b>0,150</b></span>
+        </div>
+        <div class="const-row">
+          <code>kGyroReversed</code>
+          <span class="now">no código <b>false</b></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main id="phases"></main>
+
+  <section class="phase">
+    <div class="phase-head">
+      <div class="phase-title"><span class="phase-no">&mdash;</span><h2>Liberação</h2></div>
+    </div>
+    <p class="phase-sub">Quem assinou viu o robô fechar o quadrado, não o checklist preenchido.</p>
+    <div class="signoff">
+      <div class="field"><label for="sg-quem">Responsável</label><input id="sg-quem" data-sign="quem" type="text" autocomplete="off"></div>
+      <div class="field"><label for="sg-data">Data</label><input id="sg-data" data-sign="data" type="date"></div>
+      <div class="field"><label for="sg-commit">Commit validado</label><input id="sg-commit" data-sign="commit" type="text" placeholder="ad815cf" autocomplete="off"></div>
+      <div class="field"><label for="sg-bat">Bateria no fim (V)</label><input id="sg-bat" data-sign="bateria" type="text" inputmode="decimal" autocomplete="off"></div>
+    </div>
+  </section>
+
+  <section class="phase">
+    <div class="phase-head">
+      <div class="phase-title"><span class="phase-no">&mdash;</span><h2>Resumo para o relatório</h2></div>
+    </div>
+    <div class="actions" style="margin-bottom:1rem">
+      <button type="button" class="primary" id="copy">Copiar resumo</button>
+      <button type="button" class="danger" id="reset">Limpar tudo</button>
+      <span class="sync" id="sync"></span>
+    </div>
+    <pre class="summary" id="summary" tabindex="0"></pre>
+  </section>
+
+  <footer>
+    Valores medidos ficam gravados nesta página. Os números que você anotar nas fases 2, 3 e 4
+    vão direto para <code>Constants.java</code> &mdash; nenhuma outra fase vale nada antes disso.
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var PHASES = [
+    {
+      no: "0",
+      title: "Antes de energizar",
+      sub: "Robô sobre cavaletes, rodas no ar. Nada neste roteiro é feito com o robô no chão até a fase 5.",
+      items: [
+        { id: "p0a", gate: true, text: "Robô sobre cavaletes, as três rodas girando livres e sem tocar nada." },
+        { id: "p0b", gate: true, text: "Botão de emergência ao alcance e testado: aciona e corta.",
+          expect: "Teste antes de qualquer motor girar, não depois." },
+        { id: "p0c", text: "Bateria carregada e tensão medida em repouso.",
+          expect: "Abaixo de 12,0 V o PID de velocidade satura e toda medição de distância sai curta.",
+          field: { label: "medido", unit: "V", ph: "12,6" } },
+        { id: "p0d", text: "Parafusos das três rodas apertados; sem folga axial ao balançar a roda à mão.",
+          expect: "Folga aqui aparece depois como erro de odometria que nenhuma constante corrige." },
+        { id: "p0e", text: "Cabos dos encoders presos e com folga de serviço, sem tração no conector." },
+        { id: "p0f", text: "CAN ID do TitanQuad confere com o código.",
+          ref: "DriveConstants.kTitanCanId = 42",
+          field: { label: "lido", unit: "", ph: "42" } },
+        { id: "p0g", text: "Código atual no robô; commit anotado.",
+          ref: "./gradlew deploy",
+          field: { label: "commit", unit: "", ph: "ad815cf" } },
+        { id: "p0h", text: "Testes de bancada passando antes de subir no robô.",
+          ref: "./gradlew test → 11 tests, 0 failures" }
+      ]
+    },
+    {
+      no: "1",
+      title: "Identificação de motores e encoders",
+      sub: "Descobrir qual canal move qual roda e qual encoder a lê. Um par trocado aqui faz a odometria apontar para o lado errado com uma matemática perfeitamente correta.",
+      items: [
+        { id: "p1a", gate: true, text: "Canal 0 em 20% move a roda traseira.",
+          ref: "kMotor1Channel = 0 // Traseira" },
+        { id: "p1b", gate: true, text: "Canal 1 em 20% move a roda frontal direita.",
+          ref: "kMotor2Channel = 1 // Frontal Direita" },
+        { id: "p1c", gate: true, text: "Canal 2 em 20% move a roda frontal esquerda.",
+          ref: "kMotor3Channel = 2 // Frontal Esquerda" },
+        { id: "p1d", text: "Girando cada roda à mão, só o encoder daquela roda muda.",
+          expect: "Confirma o par motor↔encoder, não só o canal." },
+        { id: "p1e", gate: true, text: "Comando positivo em cada motor gera contagem positiva no seu encoder.",
+          expect: "Se um vier negativo, corrija o sinal e repita &mdash; não compense na odometria.",
+          ref: "motorSettings() / setInverted()" },
+        { id: "p1f", text: "Rodas omni montadas com os roletes livres, girando no eixo transversal sem travar." }
+      ]
+    },
+    {
+      no: "2",
+      title: "Escala do encoder",
+      sub: "Determina kEncoderTicksPerRevolution e kWheelDiameterMeters. Com a escala errada a odometria fica coerente consigo mesma e errada em metros: tudo o que vem depois herda o erro.",
+      items: [
+        { id: "p2a", text: "Diâmetro real da roda omni medido com paquímetro, três tomadas em posições diferentes.",
+          expect: "A roda nominal de 100 mm costuma medir menos com o rolete carregado.",
+          field: { label: "média", unit: "mm", ph: "98,4" } },
+        { id: "p2b", text: "Roda marcada com fita; girada exatamente 10 voltas à mão; ticks brutos lidos.",
+          expect: "Dez voltas diluem o erro de marcação por dez.",
+          field: { label: "ticks", unit: "", ph: "14640" } },
+        { id: "p2c", text: "Ticks por volta calculados e comparados com o valor do código.",
+          expect: "ticks/volta = leitura ÷ 10. Divergência acima de 2% é escala errada, não ruído.",
+          ref: "kEncoderTicksPerRevolution = 1464,0",
+          field: { label: "calculado", unit: "", ph: "1464" } },
+        { id: "p2d", gate: true, text: "Constantes atualizadas em Constants.java e novo deploy feito.",
+          ref: "kEncoderTicksPerRevolution, kWheelDiameterMeters" },
+        { id: "p2e", text: "Conferência fechada: 10 voltas à mão agora leem a distância esperada.",
+          expect: "Esperado 10 × π × D. Com D = 98,4 mm isso dá 3,091 m.",
+          field: { label: "lido", unit: "m", ph: "3,09" } }
+      ]
+    },
+    {
+      no: "3",
+      title: "IMU navX",
+      sub: "O ângulo da pose vem inteiro da IMU &mdash; as rodas omni escorregam demais para estimar rotação. Esta fase decide kGyroReversed.",
+      items: [
+        { id: "p3a", text: "navX na porta MXP, LED de status em operação normal após o boot.",
+          ref: "new AHRS(SPI.Port.kMXP)" },
+        { id: "p3b", text: "Robô imóvel por 30 s; deriva do yaw medida.",
+          expect: "Acima de 1°/min a IMU não assentou: espere o aquecimento e repita.",
+          field: { label: "deriva", unit: "°/min", ph: "0,4" } },
+        { id: "p3c", gate: true, text: "Robô girado 90° no sentido anti-horário à mão; Odom Theta cresce para +90.",
+          expect: "Se cair para &minus;90, troque <b>kGyroReversed</b> e repita este item.",
+          ref: "SmartDashboard → Odom Theta (deg)",
+          field: { label: "lido", unit: "°", ph: "+90" } },
+        { id: "p3d", text: "Giro completo de 360° e volta à marca inicial; erro de fechamento anotado.",
+          expect: "Até 2° é normal. Mais que isso contamina toda translação longa.",
+          field: { label: "erro", unit: "°", ph: "1,5" } },
+        { id: "p3e", text: "Gatilho do joystick zera o rumo e a pose volta à origem.",
+          ref: "OIConstants.kResetGyroButton → resetHeading()" }
+      ]
+    },
+    {
+      no: "4",
+      title: "Geometria do chassi",
+      sub: "Determina kRobotRadiusMeters. Afeta só o θ estimado pelas rodas, que é diagnóstico &mdash; a pose usa a IMU. Medir mal aqui não quebra a odometria, mas apaga o sinal que denuncia escorregamento.",
+      items: [
+        { id: "p4a", text: "Distância do centro do chassi ao centro de cada roda medida nas três rodas.",
+          expect: "As três têm que bater entre si. Diferença grande é chassi fora de esquadro.",
+          field: { label: "média", unit: "mm", ph: "150" } },
+        { id: "p4b", text: "kRobotRadiusMeters atualizado com a média e novo deploy feito.",
+          ref: "DriveConstants.kRobotRadiusMeters" },
+        { id: "p4c", text: "Giro de 360° no lugar: θ estimado pelas rodas comparado com o θ da IMU.",
+          expect: "Diferença acima de 10% indica escorregamento ou raio errado. Confie na IMU.",
+          field: { label: "Δ", unit: "%", ph: "6" } }
+      ]
+    },
+    {
+      no: "5",
+      title: "Odometria empurrando à mão",
+      sub: "Robô no chão, motores desabilitados. Sem motor não há escorregamento de tração: o que sobrar de erro aqui é escala ou sinal, não pilotagem.",
+      items: [
+        { id: "p5a", text: "Robô na origem de uma linha de referência no piso; odometria zerada.",
+          ref: "resetHeading() pelo gatilho" },
+        { id: "p5b", gate: true, text: "Empurrado 1,000 m para frente ao longo da guia; Odom X lido.",
+          expect: "Esperado 1,00 m em X e <b>|Y| &lt; 0,02 m</b>. Y crescendo junto é eixo trocado.",
+          field: { label: "Odom X", unit: "m", ph: "0,99" } },
+        { id: "p5c", text: "Desvio lateral do mesmo trajeto anotado.",
+          field: { label: "Odom Y", unit: "m", ph: "0,01" } },
+        { id: "p5d", gate: true, text: "Empurrado 1,000 m para a esquerda; Odom Y lido.",
+          expect: "Esperado +1,00 m em Y. Sinal negativo é a convenção de eixo invertida.",
+          field: { label: "Odom Y", unit: "m", ph: "1,00" } },
+        { id: "p5e", text: "Empurrado 1,000 m na diagonal a 45°.",
+          expect: "Esperado X ≈ Y ≈ 0,707 m. Pega erro de escala em uma roda só.",
+          field: { label: "X / Y", unit: "m", ph: "0,71 / 0,70" } },
+        { id: "p5f", text: "Erro percentual da fase calculado sobre a trena.",
+          expect: "Até 2% é aceitável para omni. Acima disso volte à fase 2.",
+          field: { label: "erro", unit: "%", ph: "1,2" } }
+      ]
+    },
+    {
+      no: "6",
+      title: "Odometria sob tração",
+      sub: "Agora com motor. O erro cresce porque roleto de omni escorrega sob torque &mdash; é isso que estamos quantificando.",
+      items: [
+        { id: "p6a", gate: true, text: "Field-oriented confere: com o robô girado 90°, joystick para frente leva o robô para o mesmo lado do campo de antes.",
+          expect: "Se o robô sair na diagonal, kGyroReversed está errado &mdash; volte ao item 3.3.",
+          ref: "driveFieldOriented()" },
+        { id: "p6b", text: "Translação de 1,000 m em teleop medida com trena e comparada com Odom X.",
+          expect: "Diferença maior que 5% indica PID saturando ou bateria caindo.",
+          field: { label: "trena / odom", unit: "m", ph: "1,00 / 0,96" } },
+        { id: "p6c", text: "Giro de 360° em teleop: deslocamento do centro do robô ao fim.",
+          expect: "Até 0,05 m. É escorregamento puro, não some com calibração.",
+          field: { label: "desvio", unit: "m", ph: "0,03" } },
+        { id: "p6d", gate: true, text: "Quadrado de 0,50 m rodado em autônomo; erro de fechamento medido com trena.",
+          ref: "SquareAutoCommand / AutoConstants.kSquareSideMeters",
+          field: { label: "erro trena", unit: "m", ph: "0,06" } },
+        { id: "p6e", text: "Pose ao fim do quadrado comparada com a trena.",
+          expect: "O par (trena, odom) é o que diz se a odometria mente ou se o robô errou o trajeto.",
+          field: { label: "Odom X / Y", unit: "m", ph: "0,02 / 0,01" } },
+        { id: "p6f", text: "kHeadingP validado: durante a translação o robô corrige o rumo em vez de girar.",
+          expect: "Girando no lugar, o sinal está invertido &mdash; use &minus;0,010.",
+          ref: "AutoConstants.kHeadingP = 0,010" },
+        { id: "p6g", text: "Bateria reconferida no fim da fase; se caiu, repetir 6.2 com carga cheia.",
+          field: { label: "medido", unit: "V", ph: "12,1" } }
+      ]
+    }
+  ];
+
+  /* ---------- estado ---------- */
+
+  var LS_KEY = "omnidrive-comissionamento-v1";
+  var state = { items: {}, sign: {} };
+  var docRef = null;
+  var writing = false;
+  var pendingWrite = false;
+  var writeTimer = null;
+
+  var allItems = [];
+  PHASES.forEach(function (p, pi) {
+    p.items.forEach(function (it, ii) {
+      it.label = p.no + "." + (ii + 1);
+      it.phaseIndex = pi;
+      allItems.push(it);
+    });
+  });
+
+  function readLocal() {
+    try {
+      var raw = window.localStorage.getItem(LS_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object") {
+          state.items = parsed.items || {};
+          state.sign = parsed.sign || {};
+        }
+      }
+    } catch (e) { /* sem storage: segue com estado vazio */ }
+  }
+
+  function writeLocal() {
+    try { window.localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+    catch (e) { /* cota ou modo privado: a pagina continua utilizavel */ }
+  }
+
+  /* ---------- render ---------- */
+
+  var elPhases = document.getElementById("phases");
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  function buildItem(it) {
+    var row = el("div", "item" + (it.gate ? " gate" : ""));
+    row.dataset.item = it.id;
+
+    var box = el("input", "box");
+    box.type = "checkbox";
+    box.id = "cb-" + it.id;
+    box.setAttribute("aria-labelledby", "tx-" + it.id);
+    row.appendChild(box);
+
+    var body = el("div", "item-body");
+    row.appendChild(body);
+
+    var text = el("p", "item-text");
+    text.id = "tx-" + it.id;
+    var html = "";
+    if (it.gate) html += '<span class="tag">trava</span>';
+    html += "<b>" + it.label + "</b> &nbsp;" + it.text;
+    text.innerHTML = html;
+    body.appendChild(text);
+
+    if (it.expect) {
+      var ex = el("p", "expect");
+      ex.innerHTML = it.expect;
+      body.appendChild(ex);
+    }
+    if (it.ref) {
+      var rf = el("p", "ref");
+      rf.innerHTML = "<code class='mono'>" + it.ref + "</code>";
+      body.appendChild(rf);
+    }
+    if (it.field) {
+      var rec = el("div", "record");
+      var lab = el("label", null, it.field.label);
+      lab.setAttribute("for", "in-" + it.id);
+      var inp = el("input");
+      inp.type = "text";
+      inp.id = "in-" + it.id;
+      inp.autocomplete = "off";
+      inp.placeholder = it.field.ph || "";
+      inp.dataset.value = it.id;
+      rec.appendChild(lab);
+      rec.appendChild(inp);
+      if (it.field.unit) rec.appendChild(el("span", "unit", it.field.unit));
+      body.appendChild(rec);
+    }
+    return row;
+  }
+
+  PHASES.forEach(function (p) {
+    var sec = el("section", "phase");
+    sec.id = "fase-" + p.no;
+
+    var head = el("div", "phase-head");
+    var titleWrap = el("div", "phase-title");
+    titleWrap.appendChild(el("span", "phase-no", "Fase " + p.no));
+    titleWrap.appendChild(el("h2", null, p.title));
+    head.appendChild(titleWrap);
+    var count = el("p", "phase-count", "0/" + p.items.length);
+    count.dataset.phaseCount = p.no;
+    head.appendChild(count);
+    sec.appendChild(head);
+
+    sec.appendChild(el("p", "phase-sub", p.sub));
+
+    var list = el("div");
+    p.items.forEach(function (it) { list.appendChild(buildItem(it)); });
+    sec.appendChild(list);
+
+    elPhases.appendChild(sec);
+  });
+
+  document.getElementById("total").textContent = String(allItems.length);
+
+  /* ---------- pintar o estado na tela ---------- */
+
+  function paint(skipFocused) {
+    var focused = document.activeElement;
+    var done = 0, gatesOpen = 0;
+
+    allItems.forEach(function (it) {
+      var rec = state.items[it.id] || {};
+      var row = elPhases.querySelector('[data-item="' + it.id + '"]');
+      var box = document.getElementById("cb-" + it.id);
+      var checked = !!rec.ok;
+
+      if (checked) done++;
+      if (it.gate && !checked) gatesOpen++;
+
+      if (box.checked !== checked) box.checked = checked;
+      row.classList.toggle("checked", checked);
+
+      if (it.field) {
+        var inp = document.getElementById("in-" + it.id);
+        var v = rec.v || "";
+        if (!(skipFocused && inp === focused) && inp.value !== v) inp.value = v;
+      }
+    });
+
+    PHASES.forEach(function (p) {
+      var n = p.items.filter(function (it) { return (state.items[it.id] || {}).ok; }).length;
+      var node = elPhases.querySelector('[data-phase-count="' + p.no + '"]');
+      node.textContent = n + "/" + p.items.length;
+      node.classList.toggle("done", n === p.items.length);
+    });
+
+    Object.keys(state.sign).forEach(function (k) {
+      var inp = document.querySelector('[data-sign="' + k + '"]');
+      if (inp && !(skipFocused && inp === focused) && inp.value !== state.sign[k]) {
+        inp.value = state.sign[k];
+      }
+    });
+
+    document.getElementById("done").textContent = String(done);
+    document.getElementById("barfill").style.width = (allItems.length ? (done / allItems.length * 100) : 0) + "%";
+
+    var note = document.getElementById("gatenote");
+    var txt = document.getElementById("gatetext");
+    if (gatesOpen === 0) {
+      note.classList.add("clear");
+      txt.textContent = "Todas as travas fechadas. Robô liberado para o piso.";
+    } else {
+      note.classList.remove("clear");
+      txt.textContent = gatesOpen === 1
+        ? "1 trava aberta — não siga adiante."
+        : gatesOpen + " travas abertas — não siga adiante.";
+    }
+
+    renderSummary(done);
+  }
+
+  function br(ch, n) { var s = ""; for (var i = 0; i < n; i++) s += ch; return s; }
+
+  function renderSummary(done) {
+    var lines = [];
+    lines.push("COMISSIONAMENTO OMNIDRIVE — Lab 9");
+    lines.push(br("=", 46));
+    lines.push("Responsável : " + (state.sign.quem || "—"));
+    lines.push("Data        : " + (state.sign.data || "—"));
+    lines.push("Commit      : " + (state.sign.commit || "—"));
+    lines.push("Itens        : " + done + "/" + allItems.length);
+    lines.push("");
+
+    PHASES.forEach(function (p) {
+      lines.push("FASE " + p.no + " — " + p.title.toUpperCase());
+      p.items.forEach(function (it) {
+        var rec = state.items[it.id] || {};
+        var mark = rec.ok ? "[x]" : "[ ]";
+        var gate = it.gate ? " (TRAVA)" : "";
+        var line = "  " + mark + " " + it.label + gate;
+        if (it.field) line += "  " + it.field.label + ": " + (rec.v || "—") + (it.field.unit ? " " + it.field.unit : "");
+        lines.push(line);
+      });
+      lines.push("");
+    });
+
+    document.getElementById("summary").textContent = lines.join("\n");
+  }
+
+  /* ---------- persistencia ---------- */
+
+  function save() {
+    writeLocal();
+    if (!docRef) return;
+    if (writeTimer) window.clearTimeout(writeTimer);
+    writeTimer = window.setTimeout(flush, 700);
+  }
+
+  function flush() {
+    if (!docRef) return;
+    if (writing) { pendingWrite = true; return; }
+    writing = true;
+    var snapshot = { items: state.items, sign: state.sign };
+    docRef.set(snapshot).then(function () {
+      setSync("gravado");
+    })["catch"](function (err) {
+      setSync(err && err.code === "permission_denied" ? "somente leitura" : "offline, salvo neste navegador");
+    }).then(function () {
+      writing = false;
+      if (pendingWrite) { pendingWrite = false; flush(); }
+    });
+  }
+
+  function setSync(msg) {
+    document.getElementById("sync").textContent = msg;
+  }
+
+  /* ---------- eventos ---------- */
+
+  elPhases.addEventListener("change", function (ev) {
+    var t = ev.target;
+    if (!t.classList.contains("box")) return;
+    var id = t.id.slice(3);
+    var rec = state.items[id] || {};
+    rec.ok = t.checked;
+    state.items[id] = rec;
+    paint(true);
+    save();
+  });
+
+  elPhases.addEventListener("input", function (ev) {
+    var t = ev.target;
+    if (!t.dataset.value) return;
+    var rec = state.items[t.dataset.value] || {};
+    rec.v = t.value;
+    state.items[t.dataset.value] = rec;
+    renderSummary(allItems.filter(function (it) { return (state.items[it.id] || {}).ok; }).length);
+    save();
+  });
+
+  document.addEventListener("input", function (ev) {
+    var t = ev.target;
+    if (!t.dataset || !t.dataset.sign) return;
+    state.sign[t.dataset.sign] = t.value;
+    renderSummary(allItems.filter(function (it) { return (state.items[it.id] || {}).ok; }).length);
+    save();
+  });
+
+  document.getElementById("reset").addEventListener("click", function () {
+    if (!window.confirm("Limpar todas as marcações e valores medidos?")) return;
+    state = { items: {}, sign: {} };
+    paint(false);
+    save();
+  });
+
+  document.getElementById("copy").addEventListener("click", function () {
+    var text = document.getElementById("summary").textContent;
+    var btn = this;
+    function ok() { btn.textContent = "Copiado"; window.setTimeout(function () { btn.textContent = "Copiar resumo"; }, 1600); }
+    function fallback() {
+      var pre = document.getElementById("summary");
+      var range = document.createRange();
+      range.selectNodeContents(pre);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      btn.textContent = "Selecionado — Ctrl+C";
+      window.setTimeout(function () { btn.textContent = "Copiar resumo"; }, 2400);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(ok)["catch"](fallback);
+    } else {
+      fallback();
+    }
+  });
+
+  /* ---------- arranque ---------- */
+
+  readLocal();
+  paint(false);
+  setSync("salvo neste navegador");
+
+  if (window.claude && typeof window.claude.use === "function") {
+    window.claude.use("db").then(function (db) {
+      if (!db) return;
+      docRef = db.doc("comissionamento/omnidrive");
+      docRef.onSnapshot(function (snap) {
+        if (snap.metadata && snap.metadata.hasPendingWrites) return;
+        if (!snap.exists) { setSync("pronto para sincronizar"); return; }
+        var data = snap.data() || {};
+        state.items = data.items || {};
+        state.sign = data.sign || {};
+        writeLocal();
+        paint(true);
+        setSync("sincronizado");
+      }, function () {
+        docRef = null;
+        setSync("salvo neste navegador");
+      });
+    })["catch"](function () { /* sem db: localStorage basta */ });
+  }
+})();
+</script>
+
+</body></html>

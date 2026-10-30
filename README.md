@@ -8,8 +8,7 @@
 
 - [📚 Docs](./docs)
 - [🚌 Can Bus](./CanBus.md)
-- [🤖 Criando Autonomia](./CreatingAutonomous.md)
-- [🔬 Lab 11 - Lidar](./Lab11Lidar)
+- [🤖 Criando Autonomo](./CreatingAutonomous.md)
 - [🧪 Aulas extras](./aula1)
 
 ---

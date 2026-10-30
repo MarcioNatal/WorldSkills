@@ -4,26 +4,38 @@
 
 ---
 
-## 📚 Laboratórios
+## 🔗 Acesso rápido
 
-### 🔷 [Laboratório 1 - Fundamentos de Robótica](./Laboratorio1)
-**Programa base para robótica móvel com motor em modo autônomo**
-
-**Desafios propostos:**
-- ✅ Criar autonomia para mover o robô para frente por 5s e depois lateralmente por 2s
-- ✅ Criar nova opção de escolha de autonomia na aba da SmartDashboard
+- [📚 Docs](./docs)
+- [🚌 Can Bus](./CanBus.md)
+- [🤖 Criando Autonomia](./CreatingAutonomous.md)
+- [🔬 Lab 11 - Lidar](./Lab11Lidar)
+- [🧪 Aulas extras](./aula1)
 
 ---
 
-### 🔶 [Laboratório 2 - Teleoperação & Joystick](./Laboratorio2)
-**Programa para operação do robô em modo Teleoperado com controle por joystick**
+## 📚 Laboratórios
+
+### 🔷 [Laboratório 1 - Introdução](./lab1Introducao)
+**Fundamentos de robótica móvel com controle básico e movimentos autônomos**
+
+**Objetivos:**
+- ✅ Entender a estrutura do projeto FRC
+- ✅ Controlar movimento básico do robô
+- ✅ Desenvolver autonomia simples
+
+---
+
+### 🔶 [Laboratório 2 - Teleoperação & Joystick](./lab2TeleopMode)
+**Programa para operação do robô em modo teleoperado com controle por joystick**
 
 **Desafios propostos:**
 - ✅ Criar um botão para parar o Comando SimpleDrive
+- ✅ Explorar controle de movimentação via joystick
 
 ---
 
-### 🔵 [Laboratório 3 - Sensores & Feedback](./Laboratorio3)
+### 🔵 [Laboratório 3 - Sensores & Feedback](./lab3Encoder)
 **Leitura de encoder, medição de velocidades e integração com Shuffleboard**
 
 **Desafios propostos:**
@@ -33,16 +45,16 @@
 
 ---
 
-### 🟢 [Laboratório 4 - Autonomia Avançada](./Laboratorio4)
+### 🟢 [Laboratório 4 - Autonomia](./lab4Autonomous)
 **Implementação de autonomia, Sendable Chooser e Sequential CommandGroup**
 
 **Desafios propostos:**
-- ✅ Fazer um novo autonomia para o robô andar lateralmente por distância
-- ✅ Fazer um novo autonomia para o robô andar lateralmente por tempo
+- ✅ Fazer uma nova autonomia para o robô andar lateralmente por distância
+- ✅ Fazer uma nova autonomia para o robô andar lateralmente por tempo
 
 ---
 
-### 🟡 [Laboratório 5 - Controle PID](./Laboratorio5)
+### 🟡 [Laboratório 5 - Controle PID](./lab5Pid)
 **Implementação de controle PID no Comando Drive to Distance**
 
 **Desafios propostos:**
@@ -51,7 +63,7 @@
 
 ---
 
-### 🟣 [Laboratório 6 - Motion Profile & Trapezoidal Control](./Laboratorio6)
+### 🟣 [Laboratório 6 - Motion Profile & Trapezoidal Control](./lab6PidTrapezoidal)
 **Controle PID avançado com Trapezoidal Motion Profile**
 
 ```java
@@ -67,7 +79,27 @@
 
 ---
 
-### 🟠 [Laboratório 9 - OmniDrive](./lab9OmniDrive)
+### 🟠 [Laboratório 7 - PID + Odometria](./lab7PidOdometria)
+**Integração de odometria com controle PID para navegação mais precisa**
+
+**Conceitos principais:**
+- Odometria
+- Controle de posicionamento
+- Correção de trajetória
+
+---
+
+### 🔴 [Laboratório 8 - Odometria 2D](./lab8PidOdometriaTranslation2D)
+**Deslocamento em 2D com tradução e rotação integradas**
+
+**Conceitos principais:**
+- Posição 2D
+- Transformação de coordenadas
+- Navegação holística
+
+---
+
+### 🟦 [Laboratório 9 - OmniDrive](./lab9OmniDrive)
 **Controle de movimentação omnidirecional para robôs com rodas omni**
 
 **Conceitos principais:**
@@ -77,12 +109,32 @@
 
 ---
 
+### 🟩 [Laboratório 11 - Lidar](./Lab11Lidar)
+**Integração com sensores LiDAR para percepção do ambiente e navegação**
+
+**Conceitos principais:**
+- Leitura de dados LiDAR
+- Obstacle avoidance
+- Percepção e mapeamento simples
+
+---
+
+## 📘 Aulas complementares
+
+- [Aula 1](./aula1)
+- [Aula 1 - Exercício](./aula1Exercicio)
+- [Aula 2](./aula2)
+- [Aula 3](./aula3)
+
+---
+
 ## 🚀 Quick Start
 
 1. Clone o repositório
 2. Navegue até o laboratório desejado
-3. Siga as instruções e complete os desafios propostos
-4. Teste no robô real!
+3. Acesse a documentação em [docs](./docs)
+4. Siga as instruções e complete os desafios propostos
+5. Teste no robô real!
 
 ---
 
@@ -96,6 +148,7 @@
 - **PID Control**
 - **Motion Profiling**
 - **OmniDrive**
+- **LiDAR**
 
 ---
 
@@ -107,6 +160,7 @@ Ao completar todos os laboratórios, você será capaz de:
 - ✨ Trabalhar com sensores e feedback
 - ✨ Otimizar trajetórias com motion profiles
 - ✨ Controlar robôs com movimentação omnidirecional
+- ✨ Integrar percepção com LiDAR
 - ✨ Participar competitivamente em eventos WorldSkills
 
 ---
